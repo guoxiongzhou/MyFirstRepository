@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjlb.mdif.dao.UserDao">
+	<resultMap id="BaseResultMap" type="com.zjlb.mdif.entity.User">
+		<id column="user_id" jdbcType="CHAR" property="userId" />
+		<result column="user_name" jdbcType="VARCHAR" property="userName" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="age" jdbcType="TINYINT" property="age" />
+		<result column="role" jdbcType="TINYINT" property="role" />
+		<result column="project_id" jdbcType="CHAR" property="projectId" />
+		<result column="email" jdbcType="VARCHAR" property="email" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="region" jdbcType="VARCHAR" property="region" />
+		<result column="hospital" jdbcType="VARCHAR" property="hospital" />
+		<result column="department" jdbcType="VARCHAR" property="department" />
+	</resultMap>
+
+	<resultMap id="ProjectListDtoMap" type="com.zjlb.mdif.entity.ProjectListDto">
+		<id column="upload_id" jdbcType="CHAR" property="uploadId" />
+		<result column="name" jdbcType="VARCHAR" property="projectName" />
+		<result column="region" jdbcType="VARCHAR" property="region" />
+		<result column="hospital" jdbcType="VARCHAR" property="hospital" />
+		<result column="file_name" jdbcType="VARCHAR" property="fileName" />
+		<result column="month" jdbcType="VARCHAR" property="month" />
+		<result column="isUpload" jdbcType="VARCHAR" property="uploadStatus" />
+		<result column="user_name" jdbcType="VARCHAR" property="userName" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		user_id, user_name, password, age, role, project_id, email, phone, region,
+		hospital,
+		department
+	</sql>
+	<sql id="Get_Project_Column_List">
+		b.upload_id, c.name, region,hospital,b.file_name,b.month,if(b.file_name is
+		null,'否','是') as isUpload,a.user_name
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where user_id = #{userId,jdbcType=CHAR}
+	</select>
+	<select id="selectByUserName" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where user_name = #{userName,jdbcType=VARCHAR}
+	</select>
+	<select id="selectOperatorByProjectId" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where project_id = #{projectId,jdbcType=VARCHAR} and role = 2		
+	</select>
+	<select id="selectAllProjects" resultMap="ProjectListDtoMap">
+		select
+		<include refid="Get_Project_Column_List" />
+		from t_user a LEFT JOIN t_upload b on a.user_id = b.user_id LEFT JOIN
+		t_project c on a.project_id = c.project_id where a.role = 2 ORDER BY
+		c.name, region,hospital,b.month,a.user_name
+	</select>
+	<select id="searchProjects" parameterType="java.lang.String" resultMap="ProjectListDtoMap">
+		select
+		<include refid="Get_Project_Column_List" />
+		from t_user a LEFT JOIN t_upload b on a.user_id = b.user_id LEFT JOIN
+		t_project c on a.project_id = c.project_id where a.role = 2 and c.name like '%${projectName,jdbcType=VARCHAR}%' ORDER BY
+		c.name, region,hospital,b.month,a.user_name
+	</select>
+	<select id="selectProject" parameterType="java.lang.String" resultMap="ProjectListDtoMap">
+		select
+		<include refid="Get_Project_Column_List" />
+		from t_user a LEFT JOIN t_upload b on a.user_id = b.user_id LEFT JOIN
+		t_project c on a.project_id = c.project_id where a.role = 2 and c.project_id = #{projectId,jdbcType=CHAR}  ORDER BY
+		c.name, region,hospital,b.month,a.user_name
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from t_user
+		where user_id = #{userId,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.zjlb.mdif.entity.User">
+		insert into t_user (user_id, user_name, password,
+		age, role, project_id,
+		email, phone, region,
+		hospital, department)
+		values (#{userId,jdbcType=CHAR}, #{userName,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{age,jdbcType=TINYINT}, #{role,jdbcType=TINYINT}, #{projectId,jdbcType=CHAR},
+		#{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+		#{region,jdbcType=VARCHAR},
+		#{hospital,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.zjlb.mdif.entity.User">
+		insert into t_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="userName != null">
+				user_name,
+			</if>
+			<if test="password != null">
+				password,
+			</if>
+			<if test="age != null">
+				age,
+			</if>
+			<if test="role != null">
+				role,
+			</if>
+			<if test="projectId != null">
+				project_id,
+			</if>
+			<if test="email != null">
+				email,
+			</if>
+			<if test="phone != null">
+				phone,
+			</if>
+			<if test="region != null">
+				region,
+			</if>
+			<if test="hospital != null">
+				hospital,
+			</if>
+			<if test="department != null">
+				department,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				#{userId,jdbcType=CHAR},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="age != null">
+				#{age,jdbcType=TINYINT},
+			</if>
+			<if test="role != null">
+				#{role,jdbcType=TINYINT},
+			</if>
+			<if test="projectId != null">
+				#{projectId,jdbcType=CHAR},
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="region != null">
+				#{region,jdbcType=VARCHAR},
+			</if>
+			<if test="hospital != null">
+				#{hospital,jdbcType=VARCHAR},
+			</if>
+			<if test="department != null">
+				#{department,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.zjlb.mdif.entity.User">
+		update t_user
+		<set>
+			<if test="userName != null">
+				user_name = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="age != null">
+				age = #{age,jdbcType=TINYINT},
+			</if>
+			<if test="role != null">
+				role = #{role,jdbcType=TINYINT},
+			</if>
+			<if test="projectId != null">
+				project_id = #{projectId,jdbcType=CHAR},
+			</if>
+			<if test="email != null">
+				email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="region != null">
+				region = #{region,jdbcType=VARCHAR},
+			</if>
+			<if test="hospital != null">
+				hospital = #{hospital,jdbcType=VARCHAR},
+			</if>
+			<if test="department != null">
+				department = #{department,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where user_id = #{userId,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.zjlb.mdif.entity.User">
+		update t_user
+		set user_name = #{userName,jdbcType=VARCHAR},
+		password = #{password,jdbcType=VARCHAR},
+		age = #{age,jdbcType=TINYINT},
+		role = #{role,jdbcType=TINYINT},
+		project_id = #{projectId,jdbcType=CHAR},
+		email = #{email,jdbcType=VARCHAR},
+		phone = #{phone,jdbcType=VARCHAR},
+		region = #{region,jdbcType=VARCHAR},
+		hospital = #{hospital,jdbcType=VARCHAR},
+		department = #{department,jdbcType=VARCHAR}
+		where user_id = #{userId,jdbcType=CHAR}
+	</update>
+</mapper>
