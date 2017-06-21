@@ -8,5 +8,7 @@ import com.zjlb.mdif.entity.User;
 public interface UserService
 {
 	User doUserLogin(User user);
+	
+	
 	    
 }

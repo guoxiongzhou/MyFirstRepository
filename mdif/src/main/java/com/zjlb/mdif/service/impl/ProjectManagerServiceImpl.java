@@ -88,8 +88,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	 */
 	private boolean isProjectManager(User user)
 	{
-		Byte projectManagerRole = (byte)1;
-		return user.getRole().equals(projectManagerRole);
+		return user.getRole() == (byte)1;
 	}
 	
 	/**
@@ -99,8 +98,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	 */
 	private boolean isRegionOperator(User user)
 	{
-		Byte projectManagerRole = (byte)2;
-		return user.getRole().equals(projectManagerRole);
+		return user.getRole() == (byte)2;
 	}
 	
 	/**
@@ -257,6 +255,11 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 			if(uploadFile != null && uploadFile.getUserId().equals(user.getUserId()))
 			{
 				uploadFileDao.deleteByPrimaryKey(uploadId);
+				File file = getTargetUploadFile(uploadFile.getFileId(),uploadFile.getFileName());
+				if(file != null && file.exists())
+				{
+					file.delete();
+				}
 				return true;
 			}
 			else
@@ -269,6 +272,8 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 			return false;
 		}
 	}
+	
+	
 
 	@Override
 	public boolean uploadTemplate(MultipartFile templateFile, String userId)
@@ -313,6 +318,9 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 		return template;
 	}
 
+	/**
+	 * 删除模板文件
+	 */
 	@Override
 	public boolean deleteTemplateFile(String templateId, String userId) 
 	{
@@ -324,6 +332,11 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 			if(template != null && template.getProjectId().equals(user.getProjectId()))
 			{
 				templateDao.deleteByPrimaryKey(templateId);
+				File file = getTargetUploadTemplateFile(template.getTemplateId(),template.getName());
+				if(file != null && file.exists())
+				{
+					file.delete();
+				}
 				return true;
 			}
 			else
@@ -335,6 +348,64 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 		{
 			return false;
 		}
+	}
+
+	@Override
+	public String GetFileName(String uploadId)
+	{
+		UploadFile uploadFile = uploadFileDao.selectByPrimaryKey(uploadId);
+		if(uploadFile != null && !StringUtils.isEmpty(uploadFile.getFileId()))
+		{
+			return uploadFile.getFileName();			
+		}
+		else
+		{
+			return null;
+		}		
+	}
+	
+	
+    /**
+     * 获取申报数据的文件
+     */
+	@Override
+	public File GetFile(String uploadId)
+	{
+		UploadFile uploadFile = uploadFileDao.selectByPrimaryKey(uploadId);
+		if(uploadFile != null && !StringUtils.isEmpty(uploadFile.getFileId()))
+		{
+			return getTargetUploadFile(uploadFile.getFileId(),uploadFile.getFileName());			
+		}
+		else
+		{
+			return null;
+		}		
+	}
+
+	@Override
+	public String GetTempateFileName(String templateId)
+	{
+		Template template = templateDao.selectByPrimaryKey(templateId);
+		if (template != null) {
+			return template.getName();
+		} else {
+			return null;
+		}
+		
+	}
+
+	@Override
+	public File GetTemplateFile(String templateId)
+	{
+		Template template = templateDao.selectByPrimaryKey(templateId);
+		if(template != null )
+		{
+			return getTargetUploadTemplateFile(template.getTemplateId(),template.getName());		
+		}
+		else
+		{
+			return null;
+		}	
 	}
 	
 	

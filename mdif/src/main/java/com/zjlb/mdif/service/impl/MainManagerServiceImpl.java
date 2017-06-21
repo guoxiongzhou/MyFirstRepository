@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.zjlb.mdif.dao.UserDao;
 import com.zjlb.mdif.entity.ProjectListDto;
+import com.zjlb.mdif.entity.User;
 import com.zjlb.mdif.service.MainManagerService;
 
 /**
@@ -22,33 +23,54 @@ public class MainManagerServiceImpl implements MainManagerService
 {
 
 	@Autowired
-	private UserDao userdao;
+	private UserDao userDao;
 	
 	/**
 	 * 总管理员获取项目信息列表
 	 */
 	@Override
-	public List<ProjectListDto> selectAllProjects()
+	public List<ProjectListDto> selectAllProjects(String userId)
 	{
-		return userdao.selectAllProjects();
+		User user = userDao.selectByPrimaryKey(userId);		
+		//判断是否为总管理员
+		if(user != null && isMainManager(user))
+		{
+			return userDao.selectAllProjects();
+		}
+		else
+		{
+			return null;
+		}
 	}
 
+	/**
+	 * 判断用户是否为总管理员
+	 * @param user
+	 * @return
+	 */
+	private boolean isMainManager(User user)
+	{
+		return user.getRole() == (byte)0;
+	}
+	
 	 /**
      * 总管理员根据项目名称查询项目信息列表
      * @param projectName
      * @return
      */
 	@Override
-	public List<ProjectListDto> searchProjects(String projectName)
-	{		
-		if(!StringUtils.isEmpty(projectName))
+	public List<ProjectListDto> searchProjects(String projectName,String userId)
+	{	
+		User user = userDao.selectByPrimaryKey(userId);		
+		//判断是否为总管理员
+		if(user != null && isMainManager(user))
 		{
-			return userdao.searchProjects(projectName);
+			return userDao.searchProjects(projectName);
 		}
 		else
 		{
-			return selectAllProjects();
-		}
+			return null;
+		}		
 	}
 
 }

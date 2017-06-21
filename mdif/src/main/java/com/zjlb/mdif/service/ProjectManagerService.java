@@ -1,5 +1,6 @@
 package com.zjlb.mdif.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -78,4 +79,32 @@ public interface ProjectManagerService
      * @return
      */
     boolean deleteTemplateFile(String templateId, String userId);
+    
+    /**
+     * 获取下载文件的文件名
+     * @param uploadId
+     * @return
+     */
+    String GetFileName(String uploadId);
+    
+    /**
+     * 获取要下载的文件
+     * @param uploadId
+     * @return
+     */
+    File GetFile(String uploadId);
+    
+    /**
+     * 获取下载模板文件的文件名
+     * @param templateId
+     * @return
+     */
+    String GetTempateFileName(String templateId);
+    
+    /**
+     * 获取要下载模板的文件
+     * @param templateId
+     * @return
+     */
+    File GetTemplateFile(String templateId);
 }

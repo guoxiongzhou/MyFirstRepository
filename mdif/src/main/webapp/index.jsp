@@ -27,11 +27,12 @@
 <!-- </table> -->
 
 <!-- </form> -->
-<form action="${pageContext.request.contextPath }/project/uploadFiles" method="post" enctype="multipart/form-data">
-   <h2>文件上传</h2>
-                文件:<input type="file" name="uploadFile"/><br/><br/>
-      <input type="submit" value="上传"/>
-   </form>
+<%-- <form action="${pageContext.request.contextPath }/project/uploadFiles" method="post" enctype="multipart/form-data"> --%>
+<!--    <h2>文件上传</h2> -->
+<!--                 文件:<input type="file" name="uploadFile"/><br/><br/> -->
+<!--       <input type="submit" value="上传"/> -->
+<!--    </form> -->
+     <a href="${pageContext.request.contextPath }/project/downloadFile.ajax?uploadId=123456">下载1 </a><br />
 <script type="text/javascript">
  $(function(){
     $("#registerBtn").click(function(event){

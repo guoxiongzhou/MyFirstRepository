@@ -15,13 +15,13 @@ public interface MainManagerService
 	 * 总管理员获取项目信息列表
 	 * @return
 	 */
-    List<ProjectListDto> selectAllProjects();
+    List<ProjectListDto> selectAllProjects(String userId);
     
     /**
      * 总管理员根据项目名称查询项目信息列表
      * @param projectName
      * @return
      */
-    List<ProjectListDto> searchProjects(String projectName);
+    List<ProjectListDto> searchProjects(String projectName,String userId);
 
 }
