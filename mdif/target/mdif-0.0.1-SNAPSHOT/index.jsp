@@ -1,44 +1,42 @@
-<%@ page language="java"  contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>登录页</title>
+<link type="text/css" href="css/styles.css" rel="Stylesheet" />
 <script src="./js/jquery.js" type="text/javascript"></script>
 </head>
 <body>
-<!-- <form action="/mdif/dologin.do" method="post"> -->
-<!-- <table> -->
-<!-- 	<tr> -->
-<!-- 		<td><label>用户名</label></td> -->
-<!-- 		<td><input type="text" name="userName" -->
-<!-- 			style="width: 120;" /></td> -->
-<!-- 	</tr> -->
-<!-- 	<tr> -->
-<!-- 		<td><label>密&nbsp;码</label></td> -->
-<!-- 		<td><input type="password" name="password" -->
-<!-- 			style="width: 120;" /></td> -->
-<!-- 	</tr> -->
-<!-- 	<tr> -->
-<!-- 		<td><input type="submit" name="login" value="登录" /></td> -->
-<!-- 		<td><input id="registerBtn" type="button" name="register" value="注册"/></td> -->
-<!-- 	</tr> -->
-<!-- </table> -->
 
-<!-- </form> -->
-<%-- <form action="${pageContext.request.contextPath }/project/uploadFiles" method="post" enctype="multipart/form-data"> --%>
-<!--    <h2>文件上传</h2> -->
-<!--                 文件:<input type="file" name="uploadFile"/><br/><br/> -->
-<!--       <input type="submit" value="上传"/> -->
-<!--    </form> -->
-     <a href="${pageContext.request.contextPath }/project/downloadFile.ajax?uploadId=123456">下载1 </a><br />
-<script type="text/javascript">
- $(function(){
-    $("#registerBtn").click(function(event){
-        window.location = "../jsp/register.jsp";
-    });
-  });
-</script>
+	<div class="main login-bg">
+		<div class="login-con">
+			<form action="user/dologin.do" method="post">
+				<table class="login-table">
+					<tr>
+						<td><div class="username-img">
+								<span><input type="text" name="username"></span>
+							</div></td>
+					</tr>
+					<tr>
+						<td><div class="password-img">
+								<span><input type="password" name="password"></span>
+							</div></td>
+					</tr>
+					<tr>
+
+						<td><button class="btn-login">登录</button></td>
+
+					</tr>
+					<tr>
+						<td><span class="red-text">用户名或密码错误</span></td>
+					</tr>
+					</form>
+				</table>
+		</div>
+	</div>
+
+
 </body>
 </html>

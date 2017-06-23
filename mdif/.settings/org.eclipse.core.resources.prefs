@@ -1,3 +1,8 @@
 eclipse.preferences.version=1
+encoding//src/main/java/com/zjlb/mdif/base/shiro/ShiroDbRealm.java=UTF-8
 encoding//src/main/java/com/zjlb/mdif/controller/UserController.java=UTF-8
+encoding//src/main/resources=UTF-8
 encoding//src/main/resources/jdbc.properties=UTF-8
+encoding//src/main/webapp/jsp/manager.jsp=UTF-8
+encoding//src/main/webapp/jsp/normal.jsp=UTF-8
+encoding//src/test/resources=UTF-8

@@ -5,8 +5,8 @@
 		<id column="user_id" jdbcType="CHAR" property="userId" />
 		<result column="user_name" jdbcType="VARCHAR" property="userName" />
 		<result column="password" jdbcType="VARCHAR" property="password" />
-		<result column="age" jdbcType="TINYINT" property="age" />
-		<result column="role" jdbcType="TINYINT" property="role" />
+		<result column="age" jdbcType="INTEGER" property="age" />
+		<result column="role" jdbcType="INTEGER" property="role" />
 		<result column="project_id" jdbcType="CHAR" property="projectId" />
 		<result column="email" jdbcType="VARCHAR" property="email" />
 		<result column="phone" jdbcType="VARCHAR" property="phone" />
@@ -87,7 +87,7 @@
 		hospital, department)
 		values (#{userId,jdbcType=CHAR}, #{userName,jdbcType=VARCHAR},
 		#{password,jdbcType=VARCHAR},
-		#{age,jdbcType=TINYINT}, #{role,jdbcType=TINYINT}, #{projectId,jdbcType=CHAR},
+		#{age,jdbcType=INTEGER}, #{role,jdbcType=INTEGER}, #{projectId,jdbcType=CHAR},
 		#{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
 		#{region,jdbcType=VARCHAR},
 		#{hospital,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR})
@@ -140,10 +140,10 @@
 				#{password,jdbcType=VARCHAR},
 			</if>
 			<if test="age != null">
-				#{age,jdbcType=TINYINT},
+				#{age,jdbcType=INTEGER},
 			</if>
 			<if test="role != null">
-				#{role,jdbcType=TINYINT},
+				#{role,jdbcType=INTEGER},
 			</if>
 			<if test="projectId != null">
 				#{projectId,jdbcType=CHAR},
@@ -175,10 +175,10 @@
 				password = #{password,jdbcType=VARCHAR},
 			</if>
 			<if test="age != null">
-				age = #{age,jdbcType=TINYINT},
+				age = #{age,jdbcType=INTEGER},
 			</if>
 			<if test="role != null">
-				role = #{role,jdbcType=TINYINT},
+				role = #{role,jdbcType=INTEGER},
 			</if>
 			<if test="projectId != null">
 				project_id = #{projectId,jdbcType=CHAR},
@@ -205,8 +205,8 @@
 		update t_user
 		set user_name = #{userName,jdbcType=VARCHAR},
 		password = #{password,jdbcType=VARCHAR},
-		age = #{age,jdbcType=TINYINT},
-		role = #{role,jdbcType=TINYINT},
+		age = #{age,jdbcType=INTEGER},
+		role = #{role,jdbcType=INTEGER},
 		project_id = #{projectId,jdbcType=CHAR},
 		email = #{email,jdbcType=VARCHAR},
 		phone = #{phone,jdbcType=VARCHAR},

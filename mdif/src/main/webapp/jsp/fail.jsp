@@ -7,6 +7,6 @@
 <title></title>
 </head>
 <body>
-login fail! ${failMsg }
+ ${failMsg }
 </body>
 </html>

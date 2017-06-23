@@ -14,12 +14,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.zjlb.mdif.dao.TemplateDao;
 import com.zjlb.mdif.dao.UploadFileDao;
 import com.zjlb.mdif.dao.UserDao;
+import com.zjlb.mdif.entity.CommonEnum.UserType;
 import com.zjlb.mdif.entity.ProjectListDto;
 import com.zjlb.mdif.entity.Template;
 import com.zjlb.mdif.entity.UploadFile;
 import com.zjlb.mdif.entity.User;
 import com.zjlb.mdif.entity.UtilConstants;
 import com.zjlb.mdif.service.ProjectManagerService;
+import com.zjlb.mdif.service.UserService;
 
 /**
  * 项目管理员对应的业务逻辑
@@ -38,6 +40,9 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	
 	@Autowired
 	private TemplateDao templateDao;
+	
+	@Autowired
+	private UserService userService;
 
 	/**
      * 项目管理员获取当前项目的上报信息列表
@@ -49,7 +54,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	{		
 		User user = userDao.selectByPrimaryKey(userId);		
 		//判断是否为项目管理员
-		if(user != null && isProjectManager(user))
+		if(user != null && userService.getUserType(user) == UserType.PROJECT_MANAGER)
 		{
 			return userDao.selectProject(user.getProjectId());
 		}
@@ -70,7 +75,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	{
 		User user = userDao.selectByPrimaryKey(userId);		
 		//判断是否为项目管理员
-		if(user != null && isProjectManager(user))
+		if(user != null && userService.getUserType(user) == UserType.PROJECT_MANAGER)
 		{
 			return userDao.selectOperatorByProjectId(user.getProjectId());
 		}
@@ -81,25 +86,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 		
 	}
 
-	/**
-	 * 判断用户是否为项目管理员
-	 * @param user
-	 * @return
-	 */
-	private boolean isProjectManager(User user)
-	{
-		return user.getRole() == (byte)1;
-	}
 	
-	/**
-	 * 判断用户是否为区域操作员
-	 * @param user
-	 * @return
-	 */
-	private boolean isRegionOperator(User user)
-	{
-		return user.getRole() == (byte)2;
-	}
 	
 	/**
 	 *  删除操作员
@@ -108,7 +95,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	public boolean deleteUser(String userId,String sessionUserId)
 	{
 		User user = userDao.selectByPrimaryKey(sessionUserId);
-		if(user != null && isProjectManager(user))
+		if(user != null && userService.getUserType(user) == UserType.PROJECT_MANAGER)
 		{
 			user = userDao.selectByPrimaryKey(userId);
 			if(user != null)
@@ -132,7 +119,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	{
 		User manager = userDao.selectByPrimaryKey(sessionUserId);
 		//项目管理员才有权限添加
-		if(manager != null && isProjectManager(manager))
+		if(manager != null && userService.getUserType(user) == UserType.PROJECT_MANAGER)
 		{			
 			User oldUser = userDao.selectByUserName(user.getUserName());
 			if(oldUser == null || StringUtils.isEmpty(oldUser.getUserId()))
@@ -165,7 +152,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	{	
 		User user = userDao.selectByPrimaryKey(userId);
 		//只有区域操作员才有权限上传申报数据
-		if(user != null && isRegionOperator(user))
+		if(user != null && userService.getUserType(user) == UserType.OPERATOR)
 		{			
 			//获取上传目标路径
 			String fileId = UUID.randomUUID().toString();
@@ -249,7 +236,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	{
 		User user = userDao.selectByPrimaryKey(userId);
 		//只有区域操作员才有权限删除上传文件
-		if(user != null && isRegionOperator(user))
+		if(user != null && userService.getUserType(user) == UserType.OPERATOR)
 		{		
 			UploadFile uploadFile = uploadFileDao.selectByPrimaryKey(uploadId);
 			if(uploadFile != null && uploadFile.getUserId().equals(user.getUserId()))
@@ -281,7 +268,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	{
 		User user = userDao.selectByPrimaryKey(userId);
 		//只有项目管理员才有权限上传模板文件
-		if(user != null && isProjectManager(user))
+		if(user != null && userService.getUserType(user) == UserType.PROJECT_MANAGER)
 		{			
 			//获取上传目标路径
 			String fileId = UUID.randomUUID().toString();
@@ -326,7 +313,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	{
 		User user = userDao.selectByPrimaryKey(userId);
 		//只有项目管理员才有权限上传模板文件
-		if(user != null && isProjectManager(user))
+		if(user != null && userService.getUserType(user) == UserType.PROJECT_MANAGER)
 		{		
 			Template template = templateDao.selectByPrimaryKey(templateId);
 			if(template != null && template.getProjectId().equals(user.getProjectId()))

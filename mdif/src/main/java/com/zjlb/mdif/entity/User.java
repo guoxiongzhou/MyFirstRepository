@@ -10,13 +10,13 @@ public class User implements Serializable
 
     private String password;
 
-    private Byte age;
+    private int age;
 
     /**
      * 角色
      * 0,省中心总管理员；1，省中心项目管理员；2，各区域管理员。
      */
-    private Byte role;
+    private int role;
 
     private String projectId;
 
@@ -54,19 +54,19 @@ public class User implements Serializable
         this.password = password == null ? null : password.trim();
     }
 
-    public Byte getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(Byte age) {
+    public void setAge(int age) {
         this.age = age;
     }
 
-    public Byte getRole() {
+    public int getRole() {
         return role;
     }
 
-    public void setRole(Byte role) {
+    public void setRole(int role) {
         this.role = role;
     }
 
