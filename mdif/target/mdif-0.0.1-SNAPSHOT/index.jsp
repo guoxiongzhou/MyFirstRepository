@@ -16,7 +16,7 @@
 				<table class="login-table">
 					<tr>
 						<td><div class="username-img">
-								<span><input type="text" name="username"></span>
+								<span><input type="text" name="userName"></span>
 							</div></td>
 					</tr>
 					<tr>

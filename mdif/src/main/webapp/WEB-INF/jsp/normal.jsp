@@ -5,14 +5,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>操作员</title>
-<link type="text/css" href="css/styles.css" rel="Stylesheet" />
+<link type="text/css" href="<%=request.getContextPath()%>/css/styles.css" rel="Stylesheet" />
 </head>
 <body>
 <div class="main">
         <div class="header">
             <div class="header-center">
                  <div class="logo fl"></div>
-                 <a href="" class="fr btn-exit">退出</a>
+                 <a href="/mdif/user/logout.do" class="fr btn-exit">退出</a>
             </div>
             
         </div>

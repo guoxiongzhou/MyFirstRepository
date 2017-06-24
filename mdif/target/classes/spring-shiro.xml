@@ -20,6 +20,9 @@
                 /jsp/normal.jsp = roles[normal]
                 /jsp/manager.jsp = roles[manager]
                 /jsp/admin.jsp = roles[admin]
+                /**/*.css=anon
+                /**/*.png=anon
+                /**/*.js=anon
                 /logout = logout
             </value>
         </property>

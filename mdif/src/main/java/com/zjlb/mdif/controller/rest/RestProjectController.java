@@ -34,9 +34,9 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/project")
-public class RestProjectController {
-	private final Logger logger = LoggerFactory
-			.getLogger(RestProjectController.class);
+public class RestProjectController
+{
+	private final Logger logger = LoggerFactory.getLogger(RestProjectController.class);
 
 	@Autowired
 	private MainManagerService mainManagerService;
@@ -51,15 +51,17 @@ public class RestProjectController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getMainManagerProjectList", method = RequestMethod.GET)
-	public ResultDto<ProjectListDto> getMainManagerProjectList(Model model,
-			HttpSession httpSession) {
+	public ResultDto<ProjectListDto> getMainManagerProjectList(Model model, HttpSession httpSession)
+	{
 		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
-		try {
+		try
+		{
 			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 			result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			result.setResult(mainManagerService
-					.selectAllProjects(getSessionUserId(httpSession)));
-		} catch (Exception ex) {
+			result.setResult(mainManagerService.selectAllProjects(getSessionUserId(httpSession)));
+		}
+		catch (Exception ex)
+		{
 			result.setMessage(UtilConstants.MESSAGE_FAILURE);
 			result.setMessageCode(UtilConstants.ERROR_CODE);
 			logger.debug("getMainManagerProjectList: " + ex.getMessage());
@@ -68,21 +70,26 @@ public class RestProjectController {
 	}
 
 	@RequestMapping(value = "/searchMainManagerProjectList", method = RequestMethod.GET)
-	public ResultDto<ProjectListDto> searchMainManagerProjectList(
-			@PathVariable String name, HttpSession httpSession) {
+	public ResultDto<ProjectListDto> searchMainManagerProjectList(@PathVariable String name, HttpSession httpSession)
+	{
 		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
-		try {
-			if (!StringUtils.isEmpty(name)) {
+		try
+		{
+			if (!StringUtils.isEmpty(name))
+			{
 				result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 				result.setMessageCode(UtilConstants.SUCCESS_CODE);
-				result.setResult(mainManagerService.searchProjects(name,
-						getSessionUserId(httpSession)));
-			} else {
+				result.setResult(mainManagerService.searchProjects(name, getSessionUserId(httpSession)));
+			}
+			else
+			{
 				result.setMessage(UtilConstants.MESSAGE_FAILURE);
 				result.setMessageCode(UtilConstants.ERROR_CODE);
 			}
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			result.setMessage(UtilConstants.MESSAGE_FAILURE);
 			result.setMessageCode(UtilConstants.ERROR_CODE);
 			logger.debug("getMainManagerProjectList: " + ex.getMessage());
@@ -96,15 +103,17 @@ public class RestProjectController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getManagerProjectList", method = RequestMethod.GET)
-	public ResultDto<ProjectListDto> getManagerProjectList(
-			HttpSession httpSession) {
+	public ResultDto<ProjectListDto> getManagerProjectList(HttpSession httpSession)
+	{
 		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
-		try {
+		try
+		{
 			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 			result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			result.setResult(projectManagerService
-					.selectProject(getSessionUserId(httpSession)));
-		} catch (Exception ex) {
+			result.setResult(projectManagerService.selectProject(getSessionUserId(httpSession)));
+		}
+		catch (Exception ex)
+		{
 			result.setMessage(UtilConstants.MESSAGE_FAILURE);
 			result.setMessageCode(UtilConstants.ERROR_CODE);
 			logger.debug("getManagerProjectList: " + ex.getMessage());
@@ -118,14 +127,17 @@ public class RestProjectController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getManagerUsers", method = RequestMethod.GET)
-	public ResultDto<User> getManagerUserList(HttpSession httpSession) {
+	public ResultDto<User> getManagerUserList(HttpSession httpSession)
+	{
 		ResultDto<User> result = new ResultDto<User>();
-		try {
+		try
+		{
 			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 			result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			result.setResult(projectManagerService
-					.selectProjectUsers(getSessionUserId(httpSession)));
-		} catch (Exception ex) {
+			result.setResult(projectManagerService.selectProjectUsers(getSessionUserId(httpSession)));
+		}
+		catch (Exception ex)
+		{
 			result.setMessage(UtilConstants.MESSAGE_FAILURE);
 			result.setMessageCode(UtilConstants.ERROR_CODE);
 			logger.debug("getManagerUserList: " + ex.getMessage());
@@ -139,30 +151,41 @@ public class RestProjectController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addManagerUsers")
-	public ResultDto<String> addManagerUser(@RequestBody User user,
-			HttpSession httpSession) {
+	public ResultDto<String> addManagerUser(@RequestBody User user, HttpSession httpSession)
+	{
 		ResultDto<String> result = new ResultDto<String>();
-		try {
-			if (user != null) {
-				if (checkUser(user)) {
-					if (projectManagerService.addUser(user,
-							getSessionUserId(httpSession))) {
+		try
+		{
+			if (user != null)
+			{
+				if (checkUser(user))
+				{
+					if (projectManagerService.addUser(user, getSessionUserId(httpSession)))
+					{
 						result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 						result.setMessageCode(UtilConstants.SUCCESS_CODE);
-					} else {
+					}
+					else
+					{
 						result.setMessage(UtilConstants.MESSAGE_FAILURE);
 						result.setMessageCode(UtilConstants.ERROR_CODE);
 					}
-				} else {
+				}
+				else
+				{
 					result.setMessage(UtilConstants.USER_NAME_UNCOMPLETED);
 					result.setMessageCode(UtilConstants.ERROR_CODE);
 				}
-			} else {
+			}
+			else
+			{
 				result.setMessage(UtilConstants.ERROR_EMPTY);
 				result.setMessageCode(UtilConstants.ERROR_CODE);
 			}
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			result.setMessage(UtilConstants.MESSAGE_FAILURE);
 			result.setMessageCode(UtilConstants.ERROR_CODE);
 			logger.debug("getManagerUserList: " + ex.getMessage());
@@ -176,18 +199,22 @@ public class RestProjectController {
 	 * @param user
 	 * @return
 	 */
-	private boolean checkUser(User user) {
-		if (StringUtils.isEmpty(user.getUserName())) {
+	private boolean checkUser(User user)
+	{
+		if (StringUtils.isEmpty(user.getUserName()))
+		{
 			return false;
 		}
-		if (StringUtils.isEmpty(user.getPassword())
-				|| user.getPassword().length() < UtilConstants.PASSWORD_LEN) {
+		if (StringUtils.isEmpty(user.getPassword()) || user.getPassword().length() < UtilConstants.PASSWORD_LEN)
+		{
 			return false;
 		}
-		if (StringUtils.isEmpty(user.getHospital())) {
+		if (StringUtils.isEmpty(user.getHospital()))
+		{
 			return false;
 		}
-		if (StringUtils.isEmpty(user.getRegion())) {
+		if (StringUtils.isEmpty(user.getRegion()))
+		{
 			return false;
 		}
 		return true;
@@ -200,8 +227,10 @@ public class RestProjectController {
 	 * @param httpSession
 	 * @return
 	 */
-	private String getSessionUserId(HttpSession httpSession) {
-		return httpSession.getAttribute("userId").toString();
+	private String getSessionUserId(HttpSession httpSession)
+	{
+		User user = (User) httpSession.getAttribute("currentUser");
+		return user.getUserId();
 	}
 
 	/**
@@ -213,16 +242,19 @@ public class RestProjectController {
 	 */
 	@RequestMapping(value = "/uploadFiles.ajax")
 	@ResponseBody
-	public ResultDto<String> uploadFiles(
-			@RequestParam(value = "uploadFile") MultipartFile sourceFile,
-			String month, HttpSession httpSession) {
+	public ResultDto<String> uploadFiles(@RequestParam(value = "uploadFile") MultipartFile sourceFile, String month,
+			HttpSession httpSession)
+	{
 		ResultDto<String> result = new ResultDto<String>();
-		try {
-			if (projectManagerService.uploadFiles(sourceFile,
-					getSessionUserId(httpSession), month)) {
+		try
+		{
+			if (projectManagerService.uploadFiles(sourceFile, getSessionUserId(httpSession), month))
+			{
 				result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 				result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			} else {
+			}
+			else
+			{
 				result.setMessage(UtilConstants.MESSAGE_FAILURE);
 				result.setMessageCode(UtilConstants.ERROR_CODE);
 			}
@@ -238,7 +270,9 @@ public class RestProjectController {
 			// sourceFile.transferTo(file);
 			// result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 			// result.setMessageCode(UtilConstants.SUCCESS_CODE);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			result.setMessage(UtilConstants.MESSAGE_FAILURE);
 			result.setMessageCode(UtilConstants.ERROR_CODE);
 			logger.debug("uploadFiles: " + ex.getMessage());
@@ -255,20 +289,25 @@ public class RestProjectController {
 	 */
 	@RequestMapping(value = "/uploadTemplate.ajax")
 	@ResponseBody
-	public ResultDto<String> uploadTemplate(
-			@RequestParam(value = "uploadTemplate") MultipartFile templateFile,
-			HttpSession httpSession) {
+	public ResultDto<String> uploadTemplate(@RequestParam(value = "uploadTemplate") MultipartFile templateFile,
+			HttpSession httpSession)
+	{
 		ResultDto<String> result = new ResultDto<String>();
-		try {
-			if (projectManagerService.uploadTemplate(templateFile,
-					getSessionUserId(httpSession))) {
+		try
+		{
+			if (projectManagerService.uploadTemplate(templateFile, getSessionUserId(httpSession)))
+			{
 				result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 				result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			} else {
+			}
+			else
+			{
 				result.setMessage(UtilConstants.MESSAGE_FAILURE);
 				result.setMessageCode(UtilConstants.ERROR_CODE);
 			}
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			result.setMessage(UtilConstants.MESSAGE_FAILURE);
 			result.setMessageCode(UtilConstants.ERROR_CODE);
 			logger.debug("uploadTemplate: " + ex.getMessage());
@@ -285,19 +324,24 @@ public class RestProjectController {
 	 */
 	@RequestMapping(value = "/deleteUploadFile.ajax")
 	@ResponseBody
-	public ResultDto<String> deleteUploadFile(String uploadId,
-			HttpSession httpSession) {
+	public ResultDto<String> deleteUploadFile(String uploadId, HttpSession httpSession)
+	{
 		ResultDto<String> result = new ResultDto<String>();
-		try {
-			if (projectManagerService.deleteUploadFile(uploadId,
-					getSessionUserId(httpSession))) {
+		try
+		{
+			if (projectManagerService.deleteUploadFile(uploadId, getSessionUserId(httpSession)))
+			{
 				result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 				result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			} else {
+			}
+			else
+			{
 				result.setMessage(UtilConstants.MESSAGE_FAILURE);
 				result.setMessageCode(UtilConstants.ERROR_CODE);
 			}
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			result.setMessage(UtilConstants.MESSAGE_FAILURE);
 			result.setMessageCode(UtilConstants.ERROR_CODE);
 			logger.debug("deleteUploadFile: " + ex.getMessage());
@@ -314,19 +358,24 @@ public class RestProjectController {
 	 */
 	@RequestMapping(value = "/deleteTemplate.ajax")
 	@ResponseBody
-	public ResultDto<String> deleteTemplate(String templateId,
-			HttpSession httpSession) {
+	public ResultDto<String> deleteTemplate(String templateId, HttpSession httpSession)
+	{
 		ResultDto<String> result = new ResultDto<String>();
-		try {
-			if (projectManagerService.deleteTemplateFile(templateId,
-					getSessionUserId(httpSession))) {
+		try
+		{
+			if (projectManagerService.deleteTemplateFile(templateId, getSessionUserId(httpSession)))
+			{
 				result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 				result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			} else {
+			}
+			else
+			{
 				result.setMessage(UtilConstants.MESSAGE_FAILURE);
 				result.setMessageCode(UtilConstants.ERROR_CODE);
 			}
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			result.setMessage(UtilConstants.MESSAGE_FAILURE);
 			result.setMessageCode(UtilConstants.ERROR_CODE);
 			logger.debug("deleteTemplate: " + ex.getMessage());
@@ -335,61 +384,76 @@ public class RestProjectController {
 	}
 
 	@RequestMapping("/downloadFile.ajax")
-	public String downloadFile(String uploadId,
-			HttpServletRequest request, HttpServletResponse response) {
-		if (!StringUtils.isEmpty(uploadId)) 
+	public String downloadFile(String uploadId, HttpServletRequest request, HttpServletResponse response)
+	{
+		if (!StringUtils.isEmpty(uploadId))
 		{
 			String fileName = projectManagerService.GetFileName(uploadId);
-			if(!StringUtils.isEmpty(fileName))
+			if (!StringUtils.isEmpty(fileName))
 			{
 				File file = projectManagerService.GetFile(uploadId);
-				downloadFile(file,fileName,response);
+				downloadFile(file, fileName, response);
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 下载文件
+	 * 
 	 * @param file
 	 * @param fileName
 	 * @param response
 	 */
-	private void downloadFile(File file,String fileName,HttpServletResponse response)
+	private void downloadFile(File file, String fileName, HttpServletResponse response)
 	{
-		if (file.exists()) {
-			response.setContentType("application/force-download");// 设置强制下载不打开					
-			response.addHeader("Content-Disposition",
-					"attachment;fileName=" + fileName);// 设置文件名
+		if (file.exists())
+		{
+			response.setContentType("application/force-download");// 设置强制下载不打开
+			response.addHeader("Content-Disposition", "attachment;fileName=" + fileName);// 设置文件名
 			byte[] buffer = new byte[1024];
 			FileInputStream fis = null;
 			BufferedInputStream bis = null;
-			try {
+			try
+			{
 				fis = new FileInputStream(file);
 				bis = new BufferedInputStream(fis);
 				OutputStream os = response.getOutputStream();
 				int i = bis.read(buffer);
-				while (i != -1) {
+				while (i != -1)
+				{
 					os.write(buffer, 0, i);
 					i = bis.read(buffer);
 				}
 				os.close();
-			} catch (Exception e) {
+			}
+			catch (Exception e)
+			{
 				// TODO: handle exception
 				e.printStackTrace();
-			} finally {
-				if (bis != null) {
-					try {
+			}
+			finally
+			{
+				if (bis != null)
+				{
+					try
+					{
 						bis.close();
-					} catch (IOException e) {
+					}
+					catch (IOException e)
+					{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-				if (fis != null) {
-					try {
+				if (fis != null)
+				{
+					try
+					{
 						fis.close();
-					} catch (IOException e) {
+					}
+					catch (IOException e)
+					{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -397,17 +461,17 @@ public class RestProjectController {
 			}
 		}
 	}
-	
+
 	@RequestMapping("/downloadTemplateFile.ajax")
-	public String downloadTemplateFile(String templateId,
-			HttpServletRequest request, HttpServletResponse response) {
-		if (!StringUtils.isEmpty(templateId)) 
+	public String downloadTemplateFile(String templateId, HttpServletRequest request, HttpServletResponse response)
+	{
+		if (!StringUtils.isEmpty(templateId))
 		{
 			String fileName = projectManagerService.GetTempateFileName(templateId);
-			if(!StringUtils.isEmpty(fileName))
+			if (!StringUtils.isEmpty(fileName))
 			{
 				File file = projectManagerService.GetTemplateFile(templateId);
-				downloadFile(file,fileName,response);
+				downloadFile(file, fileName, response);
 			}
 		}
 		return null;

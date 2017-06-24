@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>登录页</title>
-<link type="text/css" href="css/styles.css" rel="Stylesheet" />
+<link type="text/css" href="<%=request.getContextPath()%>/css/styles.css" rel="Stylesheet" />
 <script src="./js/jquery.js" type="text/javascript"></script>
 </head>
 <body>

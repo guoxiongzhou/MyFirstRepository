@@ -45,7 +45,7 @@ public class UserController
 		if (dbuser == null)
 		{
 			model.addAttribute("failMsg", "用户或密码错误!");
-			return "/jsp/fail";
+			return "/fail";
 		}
 		else
 		{
@@ -53,24 +53,24 @@ public class UserController
 			if (!"SUCC".equals(info))
 			{
 				model.addAttribute("failMsg", "用户或密码错误");
-				return "/jsp/fail";
+				return "/fail";
 			}
 			else
 			{
 				switch (userService.getUserType(dbuser))
 				{
 					case MAIN_MANAGER:
-						return "/jsp/admin";
+						return "/admin";
 					case PROJECT_MANAGER:
-						return "/jsp/manager";
+						return "/manager";
 					case OPERATOR:
-						return "/jsp/normal";
+						return "/normal";
 					default:
-						return "/jsp/fail";
+						return "/fail";
 				}
 			}
 		}
-	}
+	}	
 
 	@RequestMapping("/logout.do")
 	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException
@@ -86,7 +86,7 @@ public class UserController
 			{
 			}
 		}
-		response.sendRedirect("/index.jsp");
+		response.sendRedirect("/mdif/index.jsp");
 	}
 
 	private String loginUser(User user)
@@ -190,5 +190,13 @@ public class UserController
 		dto.setFileName("yyy");
 		list.add(dto);
 		return dto;
+	}
+	
+	@RequestMapping(value = "/test2", method = RequestMethod.GET)
+	public String test2(Model model,HttpServletRequest request, HttpSession httpSession)	
+	{
+		User dbuser = (User) httpSession.getAttribute("currentUser");
+		model.addAttribute("failMsg", dbuser.getUserName() + "_" + dbuser.getPassword());
+		return "/fail";
 	}
 }
