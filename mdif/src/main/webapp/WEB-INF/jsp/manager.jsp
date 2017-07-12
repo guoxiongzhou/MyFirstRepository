@@ -49,6 +49,7 @@
 				<div class="left-tab">
 					<ul class="left-tab-ul">
 						<li id="navigationDownload" style="background: #dbeef3">下载</li>
+						<li id="navigationProjectList" style="background:">上传情况统计</li>
 						<li id="navigationUpload" style="background:">上传模板</li>
 						<li id="navigationSetting" style="background:">操作配置</li>
 					</ul>
@@ -123,6 +124,43 @@
 					</table>
 				</div>
 				
+				<!-- 上传情况统计 -->
+				<div id="myProjectList" class="right-tab-con tab-operation" style="display: none;">
+				<table>
+                           <tr>
+                           <td>
+                             <div>
+					         <select id="selectMonthText" class="easyui-combobox" name="dept" style="width:100px; height:25px">
+                                    <option value="2017/7">2017年7月</option>
+                                    <option value="2017/8">2017年8月</option>
+                                    <option value="2017/9">2017年9月</option>
+                                    <option value="2017/10">2017年10月</option>
+                                    <option value="2017/11">2017年11月</option>
+                                    <option value="2017/12">2017年12月</option>
+                               </select>
+					           </div>
+                           </td>                          
+                           <td>
+                           <a id="btnSearchProject" href="#" class="easyui-linkbutton" type="submit" iconCls="icon-ok" style="width: 50; height: 24px" onclick="loadMyProjectByMonth()">查询</a> 
+                           </td>
+                           </tr>
+					   
+					   </table>
+				<table id="myProjectListTable" class="easyui-datagrid"
+						style="width: 920px; height: 500px"
+						data-options="rownumbers:true,singleSelect:true,method:'get'">
+						<thead>
+							<tr>							
+							    <th data-options="field:'projectName',hidden:true">项目名称</th>
+								<th data-options="field:'region',width:100,align:'center'">区域</th>
+								<th data-options="field:'hospital',width:500,align:'center'">医院名称</th>
+								<th data-options="field:'monthText',width:120,align:'center'">上传月份</th>
+								<th data-options="field:'uploadStatus',width:130,align:'center'">是否上传</th>
+								<th data-options="field:'projectManager',hidden:true">管理员</th>
+							</tr>
+						</thead>
+				</table>
+				</div>
 								
 			</div>
 		</div>
@@ -214,6 +252,16 @@ function formatDownloadFileOper(val, row, index)
 }
 </script>
 
+<script type="text/javascript">
+            $(function(){
+                $('#selectMonthText').combobox({    
+                 required:true,    
+                 multiple:false, //多选
+                 editable:false  //是否可编辑
+                 });  
+            })
+</script>
+
 	<script type="text/javascript">
 		var toolbarTemplate = [ {
 			text : '添加模板',
@@ -223,6 +271,17 @@ function formatDownloadFileOper(val, row, index)
 				importClick()
 			}
 		} ];
+	</script>
+	<script>
+		$(function(){
+			$('#myProjectListTable').datagrid({
+				rowStyler:function(index,row){
+					if (row.uploadStatus == '否'){
+						return 'color:red;font-weight:bold;';
+					}
+				}
+			});
+		});
 	</script>
 
 	<script type="text/javascript">

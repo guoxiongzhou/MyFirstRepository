@@ -45,17 +45,21 @@ function intilizeNavigation()
 	var itemli1 = document.getElementById("navigationDownload");
 	var itemli2 = document.getElementById("navigationUpload");		
 	var itemli3 = document.getElementById("navigationSetting");
+	var itemli4 = document.getElementById("navigationProjectList");
 	var table1 = document.getElementById("myDownloadList");
 	var table2 = document.getElementById("myTemplateTable");		
 	var table3 = document.getElementById("myUsersTable");
+	var table4 = document.getElementById("myProjectList");
 	itemli1.onclick = function()
 	{
 		table1.style.display = 'block';
 		table2.style.display = 'none';
 		table3.style.display = 'none';
+		table4.style.display = 'none';
 		itemli1.style.background='#dbeef3';
 		itemli2.style.background='';
 		itemli3.style.background='';
+		itemli4.style.background='';
 		loadDownloadList();
 	}
 	
@@ -64,9 +68,11 @@ function intilizeNavigation()
 		table1.style.display = 'none';
 		table2.style.display = 'block';
 		table3.style.display = 'none';
+		table4.style.display = 'none';
 		itemli1.style.background='';
 		itemli2.style.background='#dbeef3';
-		itemli3.style.background='';		
+		itemli3.style.background='';
+		itemli4.style.background='';
 		loadTemplateList();
 	}
 	
@@ -75,10 +81,25 @@ function intilizeNavigation()
 		table1.style.display = 'none';
 		table2.style.display = 'none';
 		table3.style.display = 'block';
+		table4.style.display = 'none';
 		itemli1.style.background='';
 		itemli2.style.background='';
 		itemli3.style.background='#dbeef3';
+		itemli4.style.background='';
 		loadUsers();
+	}
+	
+	itemli4.onclick = function()
+	{
+		table1.style.display = 'none';
+		table2.style.display = 'none';
+		table3.style.display = 'none';
+		table4.style.display = 'block';
+		itemli1.style.background='';
+		itemli2.style.background='';
+		itemli3.style.background='';
+		itemli4.style.background='#dbeef3';
+		loadMyProject();
 	}
 
 	  
@@ -89,7 +110,7 @@ function doUpload()
 { 
 	$("#uploadForm").ajaxSubmit({
 		type : 'post',
-		url : rootPath + '/project/uploadTemplate.ajax?version' + new Date().getTime() ,
+		url : rootPath + '/project/uploadTemplate.ajax?version=' + new Date().getTime() ,
 		success : function(data) 
 		{
 			if (data.messageCode == "00000")
@@ -241,7 +262,7 @@ function deleteTemplate(id) {
 function loadUsers() 
 {
 	$.ajax({
-		url : rootPath + '/project/getManagerUsers.ajax?version'
+		url : rootPath + '/project/getManagerUsers.ajax?version='
 				+ new Date().getTime(),
 		type : 'GET',
 		dataType : 'json',
@@ -267,7 +288,7 @@ function loadUsers()
 function loadTemplateList() 
 {
 	$.ajax({
-		url : rootPath + '/project/getTemplateList.ajax?version'
+		url : rootPath + '/project/getTemplateList.ajax?version='
 				+ new Date().getTime(),
 		type : 'GET',
 		dataType : 'json',
@@ -359,7 +380,7 @@ function addUser() {
 function loadDownloadList() 
 {
 	$.ajax({
-		url : rootPath + '/project/getMyDownloadList.ajax?version' + new Date().getTime(),
+		url : rootPath + '/project/getMyDownloadList.ajax?version=' + new Date().getTime(),
 		type : 'GET',
 		dataType : 'json',
 		cache : false,
@@ -378,4 +399,48 @@ function loadDownloadList()
 
 
 
+function loadMyProject() 
+{
+	$.ajax({
+		url : rootPath + '/project/getManagerProject.ajax?version='
+				+ new Date().getTime(),
+		type : 'GET',
+		dataType : 'json',
+		cache : false,
+		success : function(data) {
+			if (data.messageCode == "00000") 
+			{
+				 $('#myProjectListTable').datagrid('loadData', data.result);
+				
+			} else {
+				alert(data.message);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert(errorThrown);
+		}
+	});
+}
 
+function loadMyProjectByMonth() 
+{
+	var monthText = $('#selectMonthText').combobox('getValue');
+	$.ajax({
+		url : rootPath + "/project/getManagerProjectByMonth.ajax?monthText=" + monthText + " & version= " + new Date().getTime() ,
+		type : 'GET',
+		dataType : 'json',
+		cache : false,
+		success : function(data) {
+			if (data.messageCode == "00000") 
+			{
+				 $('#myProjectListTable').datagrid('loadData', data.result);
+				
+			} else {
+				alert(data.message);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert(errorThrown);
+		}
+	});
+}

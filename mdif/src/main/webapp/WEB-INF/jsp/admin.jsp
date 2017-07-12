@@ -55,7 +55,7 @@
 								<th data-options="field:'projectManager',width:170,align:'center'">管理员</th>
 							</tr>
 						</thead>
-					</table>                
+				</table>               
             </div>
         </div>
     </div>

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.ctc.wstx.util.StringUtil;
 import com.zjlb.mdif.dao.ProjectDao;
 import com.zjlb.mdif.dao.UploadFileDao;
 import com.zjlb.mdif.dao.UserDao;
@@ -134,6 +135,9 @@ public class MainManagerServiceImpl implements MainManagerService
 		return projectDtos;
 	}
 	
+	
+	
+	
 	private List<ProjectListDto>  getProjectListDto(Project project)
 	{
 		List<ProjectListDto> projectList = new ArrayList<ProjectListDto>();
@@ -171,6 +175,37 @@ public class MainManagerServiceImpl implements MainManagerService
 		
 	}
 	
+	private List<ProjectListDto>  getProjectListDto(Project project,String monthText)
+	{
+		List<ProjectListDto> projectList = new ArrayList<ProjectListDto>();
+		User projectUser = userDao.selectProjectManager(project.getProjectId());
+		List<User> users = userDao.selectOperatorByProjectId(project.getProjectId());
+		List<UploadFile> uploadFiles = new ArrayList<UploadFile>();
+		List<UploadFile> tempList;
+		if(users != null && users.size()>0)
+		{
+			for(User user : users)
+			{
+				tempList = uploadFileDao.selectByUserId(user.getUserId());
+				if(tempList != null && tempList.size()>0)
+				{
+					uploadFiles.addAll(tempList);
+				}
+			}
+			//当前年月
+			String[] monthArray = monthText.split("/");
+			int nowYear = Integer.parseInt(monthArray[0].trim());
+			int nowMonth = Integer.parseInt(monthArray[1].trim());
+			projectList.addAll(getProjectListDto(project,projectUser,nowYear,nowMonth,users,uploadFiles));
+			return projectList;			
+		}
+		else
+		{
+			return null;
+		}
+		
+	}
+	
 	private List<ProjectListDto>  getProjectListDto(Project project,User projectUser,int yearValue,int monthValue,List<User> users,List<UploadFile> uploadFiles)
 	{
 		List<ProjectListDto> projectList = new ArrayList<ProjectListDto>();
@@ -185,7 +220,7 @@ public class MainManagerServiceImpl implements MainManagerService
 	private ProjectListDto getProjectDto(Project project,User projectUser,int yearValue,int monthValue,User user,List<UploadFile> uploadFiles)
 	{
 		ProjectListDto projectListDto = new ProjectListDto();
-		UploadFile uploadFile = getMyUploadFile(user.getUserId(), uploadFiles);
+		UploadFile uploadFile = getMyUploadFile(user.getUserId(), uploadFiles,yearValue,monthValue);
 		projectListDto.setHospital(user.getHospital());
 		projectListDto.setMonthText(getMonthText(yearValue,monthValue));
 		projectListDto.setProjectId(project.getProjectId());
@@ -208,13 +243,13 @@ public class MainManagerServiceImpl implements MainManagerService
 		return String.valueOf(yearValue) + "年" + String.valueOf(monthValue) + "月";
 	}
 	
-	private UploadFile getMyUploadFile(String userId,List<UploadFile> uploadFiles)
+	private UploadFile getMyUploadFile(String userId,List<UploadFile> uploadFiles,int yearValue,int monthValue)
 	{
 		if(uploadFiles != null && uploadFiles.size()>0)
 		{
 			for(UploadFile uploadFile : uploadFiles)
 			{
-				if(uploadFile.getUserId().equals(userId))
+				if(uploadFile.getUserId().equals(userId) && uploadFile.getMonthValue() == monthValue && uploadFile.getYearValue() == yearValue)
 				{
 					return uploadFile;
 				}
@@ -276,6 +311,29 @@ public class MainManagerServiceImpl implements MainManagerService
 	private boolean isAdminRole(User user)
 	{
 		return user != null && userService.getUserType(user) == UserType.MAIN_MANAGER;
+	}
+
+	@Override
+	public List<ProjectListDto> selectMyProject(User user, String monthText)
+	{		
+		List<ProjectListDto> projectDtos = new ArrayList<ProjectListDto>();
+		List<ProjectListDto> tempProjectDtos = null;
+		
+		if(StringUtils.isEmpty(monthText))
+		{
+			tempProjectDtos = getProjectListDto(projectDao.selectByPrimaryKey(user.getProjectId())); 
+			
+		}
+		else
+		{
+			//按月份过滤
+			tempProjectDtos = getProjectListDto(projectDao.selectByPrimaryKey(user.getProjectId()),monthText);
+		}
+		if(tempProjectDtos != null && tempProjectDtos.size()>0)
+		{
+			projectDtos.addAll(tempProjectDtos);
+		}		
+		return projectDtos;
 	}
 	
 	

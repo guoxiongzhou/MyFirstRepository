@@ -22,6 +22,14 @@ public interface MainManagerService
     List<ProjectListDto> selectAllProjects(User user,UploadStatus uploadStatus);
     
     /**
+	 * 项目管理员获取上传信息列表
+	 * @param user 当前用户，用户权限判断
+	 * @param monthText 上传状态，作为查询条件
+	 * @return
+	 */
+    List<ProjectListDto> selectMyProject(User user, String monthText);
+    
+    /**
      * 总管理员根据项目名称查询项目信息列表
      * @param projectName
      * @return

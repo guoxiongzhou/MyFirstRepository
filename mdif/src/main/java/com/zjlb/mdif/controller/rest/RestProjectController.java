@@ -130,6 +130,56 @@ public class RestProjectController
 	}
 
 	/**
+	 * 项目管理员获取对应的上传信息列表
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/getManagerProject.ajax", method = RequestMethod.GET)
+	public ResultDto<ProjectListDto> getManagerProject(Model model, HttpSession httpSession)
+	{
+		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
+		try
+		{
+			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
+			result.setMessageCode(UtilConstants.SUCCESS_CODE);
+			result.setResult(mainManagerService.selectMyProject(getSessionUser(httpSession), null));
+		}
+		catch (Exception ex)
+		{
+			result.setMessage(UtilConstants.MESSAGE_FAILURE);
+			result.setMessageCode(UtilConstants.ERROR_CODE);
+			logger.debug("getManagerProject: " + ex.getMessage());
+		}
+		return result;
+	}
+	
+	/**
+	 * 项目管理员获取对应的上传信息列表
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/getManagerProjectByMonth.ajax", method = RequestMethod.GET)
+	public ResultDto<ProjectListDto> getManagerProjectByMonth(Model model, String monthText,HttpSession httpSession)
+	{
+		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
+		try
+		{
+			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
+			result.setMessageCode(UtilConstants.SUCCESS_CODE);
+			result.setResult(mainManagerService.selectMyProject(getSessionUser(httpSession), monthText));
+		}
+		catch (Exception ex)
+		{
+			result.setMessage(UtilConstants.MESSAGE_FAILURE);
+			result.setMessageCode(UtilConstants.ERROR_CODE);
+			logger.debug("getManagerProject: " + ex.getMessage());
+		}
+		return result;
+	}
+	
+	/**
 	 * 总管理员获取所有项目列表
 	 * 
 	 * @param model
