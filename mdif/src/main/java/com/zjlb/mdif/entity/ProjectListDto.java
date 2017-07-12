@@ -6,8 +6,8 @@ package com.zjlb.mdif.entity;
  *
  */
 public class ProjectListDto 
-{
-	private String uploadId;
+{	
+	private String projectId;	
 	
 	private String projectName;
 	
@@ -15,78 +15,90 @@ public class ProjectListDto
 	
 	private String hospital;
 	
-	private String fileName;
+	/**
+	 * 年月
+	 */
+	private String monthText;
 	
-	private String month;
-	
+	/**
+	 * 是否已上传
+	 */
 	private String uploadStatus;
 	
-	private String userName;
+	/**
+	 * 项目管理员
+	 */
+	private String projectManager;
 
-	public String getUploadId() {
-		return uploadId;
-	}
-
-	public void setUploadId(String uploadId) {
-		this.uploadId = uploadId;
-	}
-
-	public String getProjectName() {
+	public String getProjectName()
+	{
 		return projectName;
 	}
 
-	public void setProjectName(String projectName) {
+	public void setProjectName(String projectName)
+	{
 		this.projectName = projectName;
 	}
 
-	public String getRegion() {
+	public String getRegion()
+	{
 		return region;
 	}
 
-	public void setRegion(String region) {
+	public void setRegion(String region)
+	{
 		this.region = region;
 	}
 
-	public String getHospital() {
+	public String getHospital()
+	{
 		return hospital;
 	}
 
-	public void setHospital(String hospital) {
+	public void setHospital(String hospital)
+	{
 		this.hospital = hospital;
 	}
 
-	public String getFileName() {
-		return fileName;
+	public String getMonthText()
+	{
+		return monthText;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setMonthText(String monthText)
+	{
+		this.monthText = monthText;
 	}
 
-	public String getMonth() {
-		return month;
-	}
-
-	public void setMonth(String month) {
-		this.month = month;
-	}
-
-	public String getUploadStatus() {
+	public String getUploadStatus()
+	{
 		return uploadStatus;
 	}
 
-	public void setUploadStatus(String uploadStatus) {
+	public void setUploadStatus(String uploadStatus)
+	{
 		this.uploadStatus = uploadStatus;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getProjectManager()
+	{
+		return projectManager;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setProjectManager(String projectManager)
+	{
+		this.projectManager = projectManager;
 	}
-	
+
+	public String getProjectId()
+	{
+		return projectId;
+	}
+
+	public void setProjectId(String projectId)
+	{
+		this.projectId = projectId;
+	}
 	
 
 }

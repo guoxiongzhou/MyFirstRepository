@@ -6,11 +6,36 @@
     <result column="user_id" jdbcType="CHAR" property="userId" />
     <result column="file_id" jdbcType="CHAR" property="fileId" />
     <result column="file_name" jdbcType="VARCHAR" property="fileName" />
-    <result column="project_id" jdbcType="CHAR" property="projectId" />
-    <result column="month" jdbcType="VARCHAR" property="month" />
+    <result column="project_id" jdbcType="CHAR" property="projectId" />   
+    <result column="year_value" jdbcType="INTEGER" property="yearValue" />
+    <result column="month_value" jdbcType="INTEGER" property="monthValue" />
   </resultMap>
+  
+  <resultMap id="BaseResultMap2" type="com.zjlb.mdif.entity.MyDowloadFileDto">
+    <id column="upload_id" jdbcType="CHAR" property="fileId" />
+    <result column="region" jdbcType="VARCHAR" property="region" />
+    <result column="hospital" jdbcType="VARCHAR" property="hospital" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="monthText" jdbcType="VARCHAR" property="monthText" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMap3" type="com.zjlb.mdif.entity.ProjectListDto">
+    <result column="project_id" jdbcType="CHAR" property="projectId" />
+    <result column="name" jdbcType="VARCHAR" property="projectName" />
+    <result column="region" jdbcType="VARCHAR" property="region" />
+    <result column="hospital" jdbcType="VARCHAR" property="hospital" />
+    <result column="monthText" jdbcType="VARCHAR" property="monthText" />
+  </resultMap>
+  
   <sql id="Base_Column_List">
-    upload_id, user_id, file_id, file_name, project_id, month
+    upload_id, user_id, file_id, file_name, project_id, year_value,month_value
+  </sql>
+  <sql id="Base_Column_List2">
+    a.upload_id,b.region,b.hospital, a.file_name,CONCAT(a.year_value,'年',a.month_value,'月') as monthText,b.user_name
+  </sql>
+  <sql id="Uploaded_Column_List">
+    a.project_id, b.`name`,c.region,c.hospital, CONCAT(year_value,'年',month_value,'月') as monthText
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -18,16 +43,41 @@
     from t_upload
     where upload_id = #{uploadId,jdbcType=CHAR}
   </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_upload
+  </select>
+  <select id="selectByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_upload
+    where user_id = #{userId,jdbcType=CHAR}
+  </select>
+  
+  <select id="selectByProjectId" parameterType="java.lang.String" resultMap="BaseResultMap2">
+    select 
+    <include refid="Base_Column_List2" />
+    from t_upload a LEFT JOIN t_user b on a.user_id= b.user_id
+    where a.project_id = #{projectId,jdbcType=CHAR}    
+  </select> 
+  <select id="selectAllUploaded" resultMap="BaseResultMap3">
+    select 
+    <include refid="Uploaded_Column_List" />
+    from t_upload a LEFT JOIN t_project b ON a.project_id = b.project_id LEFT JOIN t_user c ON a.user_id = c.user_id ORDER BY a.year_value,a.month_value 
+  </select> 
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from t_upload
     where upload_id = #{uploadId,jdbcType=CHAR}
   </delete>
   <insert id="insert" parameterType="com.zjlb.mdif.entity.UploadFile">
     insert into t_upload (upload_id, user_id, file_id, 
-      file_name, project_id, month
+      file_name, project_id,year_value, month_value
       )
     values (#{uploadId,jdbcType=CHAR}, #{userId,jdbcType=CHAR}, #{fileId,jdbcType=CHAR}, 
-      #{fileName,jdbcType=VARCHAR}, #{projectId,jdbcType=CHAR}, #{month,jdbcType=VARCHAR}
+      #{fileName,jdbcType=VARCHAR}, #{projectId,jdbcType=CHAR}, #{yearValue,jdbcType=INTEGER}, #{monthValue,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.zjlb.mdif.entity.UploadFile">
@@ -48,9 +98,12 @@
       <if test="projectId != null">
         project_id,
       </if>
-      <if test="month != null">
-        month,
+      <if test="yearValue != null">
+        year_value,
       </if>
+      <if test="monthValue != null">
+        month_value,
+      </if>     
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="uploadId != null">
@@ -68,8 +121,11 @@
       <if test="projectId != null">
         #{projectId,jdbcType=CHAR},
       </if>
-      <if test="month != null">
-        #{month,jdbcType=VARCHAR},
+      <if test="yearValue != null">
+        #{yearValue,jdbcType=INTEGER},
+      </if>
+      <if test="monthValue != null">
+        #{monthValue,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -88,8 +144,11 @@
       <if test="projectId != null">
         project_id = #{projectId,jdbcType=CHAR},
       </if>
-      <if test="month != null">
-        month = #{month,jdbcType=VARCHAR},
+      <if test="yearValue != null">
+        year_value = #{yearValue,jdbcType=INTEGER},
+      </if>
+       <if test="monthValue != null">
+        month_value = #{monthValue,jdbcType=INTEGER},
       </if>
     </set>
     where upload_id = #{uploadId,jdbcType=CHAR}
@@ -100,7 +159,7 @@
       file_id = #{fileId,jdbcType=CHAR},
       file_name = #{fileName,jdbcType=VARCHAR},
       project_id = #{projectId,jdbcType=CHAR},
-      month = #{month,jdbcType=VARCHAR}
+      year_value = #{yearValue,jdbcType=INTEGER},month_value = #{monthValue,jdbcType=INTEGER}
     where upload_id = #{uploadId,jdbcType=CHAR}
   </update>
 </mapper>

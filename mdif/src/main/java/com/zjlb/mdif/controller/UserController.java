@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -24,6 +23,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.zjlb.mdif.dao.ProjectDao;
+import com.zjlb.mdif.entity.Project;
 import com.zjlb.mdif.entity.ProjectListDto;
 import com.zjlb.mdif.entity.User;
 import com.zjlb.mdif.service.UserService;
@@ -36,6 +37,9 @@ public class UserController
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private ProjectDao projectDao;
 
 	@RequestMapping("/dologin.do")
 	public String dologin(User user, Model model)
@@ -46,6 +50,7 @@ public class UserController
 		{
 			model.addAttribute("failMsg", "用户或密码错误!");
 			return "/fail";
+			
 		}
 		else
 		{
@@ -53,21 +58,11 @@ public class UserController
 			if (!"SUCC".equals(info))
 			{
 				model.addAttribute("failMsg", "用户或密码错误");
-				return "/fail";
+				return "/fail";				
 			}
 			else
 			{
-				switch (userService.getUserType(dbuser))
-				{
-					case MAIN_MANAGER:
-						return "/admin";
-					case PROJECT_MANAGER:
-						return "/manager";
-					case OPERATOR:
-						return "/normal";
-					default:
-						return "/fail";
-				}
+				return "redirect:getMyPage";
 			}
 		}
 	}	
@@ -147,17 +142,61 @@ public class UserController
 	 * @return
 	 */
 	@RequestMapping("/getMyPage")
-	public String getMyPage()
+	public String getMyPage(Model model,HttpSession httpSession, HttpServletResponse response)
 	{
-		/*
-		 * switch (userService.getUserType(getSessionUserId(httpSession))) {
-		 * case MAIN_MANAGER: return "/jsp/mainManager"; case PROJECT_MANAGER:
-		 * return "/jsp/projectManager"; case OPERATOR: return "/jsp/operator";
-		 * default: return "/jsp/fail"; }
-		 */
-		return "/jsp/operator";
+		try
+		{
+			User user = (User) httpSession.getAttribute("currentUser");
+			if(user == null)
+			{
+				model.addAttribute("failMsg", "没有权限访问");
+				response.sendRedirect("/mdif/index.jsp");
+				return null;
+			}
+			else
+			{
+				switch (userService.getUserType(user))
+				{
+					case MAIN_MANAGER:
+						return "/admin";
+					case PROJECT_MANAGER:
+						setProjectName(user,model);
+						return "/manager";
+					case OPERATOR:
+						setProjectName(user,model);
+						return "/normal";
+					default:
+						model.addAttribute("failMsg", "没有权限访问");
+						response.sendRedirect("/mdif/index.jsp");
+						return null;
+				}
+			}			
+			
+		}
+		catch(Exception ex)
+		{
+			logger.error("getMyPage: " + ex.getMessage());
+			model.addAttribute("failMsg", "没有权限访问");
+			return "/fail";
+		}		
 	}
 
+	/**
+	 * 给界面设置项目名称
+	 * @param user
+	 * @param model
+	 */
+	private void setProjectName(User user,Model model)
+	{
+		String projectName = "";
+		Project project = projectDao.selectByPrimaryKey(user.getProjectId());
+		if(project != null)
+		{
+			projectName = project.getName();
+		}
+		model.addAttribute("projectName", projectName);
+	}
+	
 	/**
 	 * 获取登录用户ID
 	 * 
@@ -180,16 +219,17 @@ public class UserController
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	public ProjectListDto getMainMangerProjectList(Model model, HttpSession httpSession)
 	{
-		List<ProjectListDto> list = new ArrayList<ProjectListDto>();
-		ProjectListDto dto = new ProjectListDto();
-		dto.setProjectName("项目1");
-		dto.setFileName("xxx");
-		list.add(dto);
-		dto = new ProjectListDto();
-		dto.setProjectName("项目2");
-		dto.setFileName("yyy");
-		list.add(dto);
-		return dto;
+//		List<ProjectListDto> list = new ArrayList<ProjectListDto>();
+//		ProjectListDto dto = new ProjectListDto();
+//		dto.setProjectName("项目1");
+//		dto.setFileName("xxx");
+//		list.add(dto);
+//		dto = new ProjectListDto();
+//		dto.setProjectName("项目2");
+//		dto.setFileName("yyy");
+//		list.add(dto);
+//		return dto;
+		return null;
 	}
 	
 	@RequestMapping(value = "/test2", method = RequestMethod.GET)

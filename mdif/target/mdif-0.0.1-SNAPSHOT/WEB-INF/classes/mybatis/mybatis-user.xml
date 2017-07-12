@@ -41,6 +41,7 @@
 		from t_user
 		where user_id = #{userId,jdbcType=CHAR}
 	</select>
+	
 	<select id="selectByUserName" parameterType="java.lang.String"
 		resultMap="BaseResultMap">
 		select
@@ -53,27 +54,35 @@
 		select
 		<include refid="Base_Column_List" />
 		from t_user
-		where project_id = #{projectId,jdbcType=VARCHAR} and role = 2		
+		where project_id = #{projectId,jdbcType=VARCHAR} and role = 1 ORDER BY 	region,hospital
+	</select>
+	
+	<select id="selectProjectManager" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where project_id = #{projectId,jdbcType=VARCHAR} and role = 2
 	</select>
 	<select id="selectAllProjects" resultMap="ProjectListDtoMap">
 		select
 		<include refid="Get_Project_Column_List" />
 		from t_user a LEFT JOIN t_upload b on a.user_id = b.user_id LEFT JOIN
-		t_project c on a.project_id = c.project_id where a.role = 2 ORDER BY
+		t_project c on a.project_id = c.project_id where a.role = 1 ORDER BY
 		c.name, region,hospital,b.month,a.user_name
 	</select>
 	<select id="searchProjects" parameterType="java.lang.String" resultMap="ProjectListDtoMap">
 		select
 		<include refid="Get_Project_Column_List" />
 		from t_user a LEFT JOIN t_upload b on a.user_id = b.user_id LEFT JOIN
-		t_project c on a.project_id = c.project_id where a.role = 2 and c.name like '%${projectName,jdbcType=VARCHAR}%' ORDER BY
+		t_project c on a.project_id = c.project_id where a.role = 1 and c.name like '%${projectName,jdbcType=VARCHAR}%' ORDER BY
 		c.name, region,hospital,b.month,a.user_name
 	</select>
 	<select id="selectProject" parameterType="java.lang.String" resultMap="ProjectListDtoMap">
 		select
 		<include refid="Get_Project_Column_List" />
 		from t_user a LEFT JOIN t_upload b on a.user_id = b.user_id LEFT JOIN
-		t_project c on a.project_id = c.project_id where a.role = 2 and c.project_id = #{projectId,jdbcType=CHAR}  ORDER BY
+		t_project c on a.project_id = c.project_id where a.role = 1 and c.project_id = #{projectId,jdbcType=CHAR}  ORDER BY
 		c.name, region,hospital,b.month,a.user_name
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">

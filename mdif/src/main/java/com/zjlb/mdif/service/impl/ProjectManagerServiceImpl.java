@@ -2,6 +2,7 @@ package com.zjlb.mdif.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,8 +16,12 @@ import com.zjlb.mdif.dao.TemplateDao;
 import com.zjlb.mdif.dao.UploadFileDao;
 import com.zjlb.mdif.dao.UserDao;
 import com.zjlb.mdif.entity.CommonEnum.UserType;
+import com.zjlb.mdif.entity.MyDowloadFileDto;
+import com.zjlb.mdif.entity.MyDownloadFileDtoList;
 import com.zjlb.mdif.entity.ProjectListDto;
 import com.zjlb.mdif.entity.Template;
+import com.zjlb.mdif.entity.TemplateDto;
+import com.zjlb.mdif.entity.TemplateDtoList;
 import com.zjlb.mdif.entity.UploadFile;
 import com.zjlb.mdif.entity.User;
 import com.zjlb.mdif.entity.UtilConstants;
@@ -119,7 +124,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	{
 		User manager = userDao.selectByPrimaryKey(sessionUserId);
 		//项目管理员才有权限添加
-		if(manager != null && userService.getUserType(user) == UserType.PROJECT_MANAGER)
+		if(manager != null && userService.getUserType(manager) == UserType.PROJECT_MANAGER)
 		{			
 			User oldUser = userDao.selectByUserName(user.getUserName());
 			if(oldUser == null || StringUtils.isEmpty(oldUser.getUserId()))
@@ -127,7 +132,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 				//不存在该用户
 				user.setUserId(UUID.randomUUID().toString());
 				user.setProjectId(manager.getProjectId());
-				user.setRole((byte)2);//操作员
+				user.setRole(1);//操作员
 				userDao.insert(user);
 				return true;
 			}
@@ -136,7 +141,10 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 				throw new Exception(UtilConstants.USER_NAME_REPEAT);
 			}
 		}
-		return false;
+		else
+		{
+			throw new Exception(UtilConstants.MESSAGE_NO_PERMISSION);
+		}		
 	}
 
 	/**
@@ -188,7 +196,9 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 		uploadFile.setUploadId(UUID.randomUUID().toString());
 		uploadFile.setFileId(fileId);
 		uploadFile.setFileName(fileName);
-		uploadFile.setMonth(month);
+		String[] timeInfo = month.split("/");
+		uploadFile.setYearValue(Integer.parseInt(timeInfo[0].trim()));
+		uploadFile.setMonthValue(Integer.parseInt(timeInfo[1].trim()));
 		uploadFile.setProjectId(user.getProjectId());
 		uploadFile.setUserId(user.getUserId());
 		return uploadFile;
@@ -230,6 +240,8 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 		File f = new File(this.getClass().getResource("/").getPath());
 		return f.getParentFile().getParentFile().getParentFile().getParentFile().getParent();
 	}
+	
+	
 
 	@Override
 	public boolean deleteUploadFile(String uploadId, String userId)
@@ -341,6 +353,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 	public String GetFileName(String uploadId)
 	{
 		UploadFile uploadFile = uploadFileDao.selectByPrimaryKey(uploadId);
+		
 		if(uploadFile != null && !StringUtils.isEmpty(uploadFile.getFileId()))
 		{
 			return uploadFile.getFileName();			
@@ -394,8 +407,39 @@ public class ProjectManagerServiceImpl implements ProjectManagerService
 			return null;
 		}	
 	}
-	
-	
 
+	/**
+	 *  获取当前项目管理员用户所在项目的模板文件列表
+	 */
+	@Override
+	public List<Template> GetMyTemplateList(User user)
+	{
+		if(user != null && !StringUtils.isEmpty(user.getProjectId()))
+		{
+			return templateDao.selectByProjectId(user.getProjectId());
+		}
+		else
+		{
+			return null;
+		}		
+	}
+
+	@Override
+	public MyDownloadFileDtoList getMyDownloadFiles(User user)
+	{
+		MyDownloadFileDtoList dtoList = new MyDownloadFileDtoList();
+		List<MyDowloadFileDto> myDowloadFileDtos = new ArrayList<MyDowloadFileDto>(); 
+		if(user != null )
+		{
+			myDowloadFileDtos = uploadFileDao.selectByProjectId(user.getProjectId());
+			if(myDowloadFileDtos == null)
+			{
+				myDowloadFileDtos = new ArrayList<MyDowloadFileDto>(); 
+			}			
+		}	
+		dtoList.setTotal(myDowloadFileDtos.size());
+		dtoList.setRows(myDowloadFileDtos);
+		return dtoList;
+	}
 	
 }

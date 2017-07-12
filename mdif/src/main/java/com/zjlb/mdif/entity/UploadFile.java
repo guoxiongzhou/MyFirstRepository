@@ -11,9 +11,31 @@ public class UploadFile {
 
     private String projectId;
 
-    private String month;
+    private int yearValue;
+    
+    private int monthValue;
+     
+	public int getYearValue()
+	{
+		return yearValue;
+	}
 
-    public String getUploadId() {
+	public void setYearValue(int yearValue)
+	{
+		this.yearValue = yearValue;
+	}
+
+	public int getMonthValue()
+	{
+		return monthValue;
+	}
+
+	public void setMonthValue(int monthValue)
+	{
+		this.monthValue = monthValue;
+	}
+
+	public String getUploadId() {
         return uploadId;
     }
 
@@ -52,12 +74,5 @@ public class UploadFile {
     public void setProjectId(String projectId) {
         this.projectId = projectId == null ? null : projectId.trim();
     }
-
-    public String getMonth() {
-        return month;
-    }
-
-    public void setMonth(String month) {
-        this.month = month == null ? null : month.trim();
-    }
+   
 }

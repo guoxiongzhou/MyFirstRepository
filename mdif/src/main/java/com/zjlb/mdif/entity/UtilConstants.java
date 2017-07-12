@@ -21,6 +21,10 @@ public class UtilConstants
 	
 	public static final String USER_NAME_UNCOMPLETED ="用户信息不完整";
 	
+	public static final String MESSAGE_PASSWORD_CONFIRM ="密码不一致";
+	
+	public static final String MESSAGE_NO_PERMISSION ="没有权限";
+	
 	/**
 	 * 密码最小长度设置
 	 */

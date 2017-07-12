@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -22,8 +26,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.zjlb.mdif.dao.HospitalDao;
+import com.zjlb.mdif.dao.RegionDao;
+import com.zjlb.mdif.entity.CommonEnum.UploadStatus;
+import com.zjlb.mdif.entity.Hospital;
+import com.zjlb.mdif.entity.MyDownloadFileDtoList;
+import com.zjlb.mdif.entity.MyUserDto;
+import com.zjlb.mdif.entity.MyUserListDto;
 import com.zjlb.mdif.entity.ProjectListDto;
+import com.zjlb.mdif.entity.Region;
 import com.zjlb.mdif.entity.ResultDto;
+import com.zjlb.mdif.entity.ResultSingleDto;
+import com.zjlb.mdif.entity.Template;
+import com.zjlb.mdif.entity.TemplateDto;
+import com.zjlb.mdif.entity.TemplateDtoList;
 import com.zjlb.mdif.entity.User;
 import com.zjlb.mdif.entity.UtilConstants;
 import com.zjlb.mdif.service.MainManagerService;
@@ -43,14 +59,58 @@ public class RestProjectController
 
 	@Autowired
 	private ProjectManagerService projectManagerService;
+	
+	@Autowired
+	private HospitalDao hospitalDao;
+	
+	@Autowired
+	private RegionDao regionDao;
 
+	@RequestMapping(value = "/getHospitals.ajax", method = RequestMethod.GET)
+	public ResultDto<Hospital> getHospitals(Model model, HttpSession httpSession)
+	{
+		ResultDto<Hospital> result = new ResultDto<Hospital>();
+		try
+		{
+			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
+			result.setMessageCode(UtilConstants.SUCCESS_CODE);
+			result.setResult(hospitalDao.selectAll());
+		}
+		catch (Exception ex)
+		{
+			result.setMessage(UtilConstants.MESSAGE_FAILURE);
+			result.setMessageCode(UtilConstants.ERROR_CODE);
+			logger.debug("getMainManagerProjectList: " + ex.getMessage());
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/getRegion.ajax", method = RequestMethod.GET)
+	public ResultDto<Region> getRegion(Model model, HttpSession httpSession)
+	{
+		ResultDto<Region> result = new ResultDto<Region>();
+		try
+		{
+			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
+			result.setMessageCode(UtilConstants.SUCCESS_CODE);
+			result.setResult(regionDao.selectAll());
+		}
+		catch (Exception ex)
+		{
+			result.setMessage(UtilConstants.MESSAGE_FAILURE);
+			result.setMessageCode(UtilConstants.ERROR_CODE);
+			logger.debug("getMainManagerProjectList: " + ex.getMessage());
+		}
+		return result;
+	}
+	
 	/**
 	 * 总管理员获取所有项目列表
 	 * 
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/getMainManagerProjectList", method = RequestMethod.GET)
+	@RequestMapping(value = "/getMainManagerProjectList.ajax", method = RequestMethod.GET)
 	public ResultDto<ProjectListDto> getMainManagerProjectList(Model model, HttpSession httpSession)
 	{
 		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
@@ -58,7 +118,7 @@ public class RestProjectController
 		{
 			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 			result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			result.setResult(mainManagerService.selectAllProjects(getSessionUserId(httpSession)));
+			result.setResult(mainManagerService.selectAllProjects(getSessionUser(httpSession), UploadStatus.NON));
 		}
 		catch (Exception ex)
 		{
@@ -69,6 +129,56 @@ public class RestProjectController
 		return result;
 	}
 
+	/**
+	 * 总管理员获取所有项目列表
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/getMainManagerUploadedProjectList.ajax", method = RequestMethod.GET)
+	public ResultDto<ProjectListDto> getMainManagerUploadedProjectList(Model model, HttpSession httpSession)
+	{
+		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
+		try
+		{
+			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
+			result.setMessageCode(UtilConstants.SUCCESS_CODE);
+			result.setResult(mainManagerService.selectAllProjects(getSessionUser(httpSession), UploadStatus.UPLOADED));
+		}
+		catch (Exception ex)
+		{
+			result.setMessage(UtilConstants.MESSAGE_FAILURE);
+			result.setMessageCode(UtilConstants.ERROR_CODE);
+			logger.debug("getMainManagerProjectList: " + ex.getMessage());
+		}
+		return result;
+	}
+	
+	/**
+	 * 总管理员获取所有项目列表
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/getMainManagerUnUploadedProjectList.ajax", method = RequestMethod.GET)
+	public ResultDto<ProjectListDto> getMainManagerUnUploadedProjectList(Model model, HttpSession httpSession)
+	{
+		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
+		try
+		{
+			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
+			result.setMessageCode(UtilConstants.SUCCESS_CODE);
+			result.setResult(mainManagerService.selectAllProjects(getSessionUser(httpSession), UploadStatus.UNUPLOAD));
+		}
+		catch (Exception ex)
+		{
+			result.setMessage(UtilConstants.MESSAGE_FAILURE);
+			result.setMessageCode(UtilConstants.ERROR_CODE);
+			logger.debug("getMainManagerProjectList: " + ex.getMessage());
+		}
+		return result;
+	}
+	
 	@RequestMapping(value = "/searchMainManagerProjectList", method = RequestMethod.GET)
 	public ResultDto<ProjectListDto> searchMainManagerProjectList(@PathVariable String name, HttpSession httpSession)
 	{
@@ -79,7 +189,7 @@ public class RestProjectController
 			{
 				result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 				result.setMessageCode(UtilConstants.SUCCESS_CODE);
-				result.setResult(mainManagerService.searchProjects(name, getSessionUserId(httpSession)));
+				result.setResult(mainManagerService.searchProjects(name, getSessionUser(httpSession)));
 			}
 			else
 			{
@@ -126,15 +236,16 @@ public class RestProjectController
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/getManagerUsers", method = RequestMethod.GET)
-	public ResultDto<User> getManagerUserList(HttpSession httpSession)
+	@RequestMapping(value = "/getManagerUsers.ajax", method = RequestMethod.GET)
+	public ResultSingleDto<MyUserListDto> getManagerUserList(HttpSession httpSession)
 	{
-		ResultDto<User> result = new ResultDto<User>();
+		ResultSingleDto<MyUserListDto> result = new ResultSingleDto<MyUserListDto>();
 		try
 		{
 			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 			result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			result.setResult(projectManagerService.selectProjectUsers(getSessionUserId(httpSession)));
+			List<User> users = projectManagerService.selectProjectUsers(getSessionUserId(httpSession));
+			result.setResult(convertDto(users));
 		}
 		catch (Exception ex)
 		{
@@ -144,22 +255,63 @@ public class RestProjectController
 		}
 		return result;
 	}
+	
+	
+	private MyUserListDto convertDto(List<User> users)
+	{
+		MyUserListDto dto = new MyUserListDto();
+		List<MyUserDto> myUsers = new ArrayList<MyUserDto>();
+		if(users != null && users.size() >0)
+		{
+			dto.setTotal(users.size());			
+			for(User user : users)
+			{
+				myUsers.add(getMyUserDto(user));
+			}			
+		}
+		dto.setRows(myUsers);
+		return dto;		
+	}
+	
+	private MyUserDto getMyUserDto(User user)
+	{
+		MyUserDto dto = new MyUserDto();
+		dto.setId(user.getUserId());
+		dto.setHospital(user.getHospital());
+		dto.setPassword(user.getPassword());
+		dto.setRegion(user.getRegion());
+		dto.setUserName(user.getUserName());
+		//dto.setOperator("删除");
+		return dto;
+		
+	}
 
 	/**
 	 * 项目管理员添加操作员
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/addManagerUsers")
-	public ResultDto<String> addManagerUser(@RequestBody User user, HttpSession httpSession)
+	@RequestMapping(value = "/addManagerUsers.ajax", method = RequestMethod.POST)
+	public ResultDto<String> addManagerUser(String regionName,String hospitalName,String userName,String password,String passwordConfirm, HttpSession httpSession)
 	{
 		ResultDto<String> result = new ResultDto<String>();
 		try
 		{
-			if (user != null)
+			if(StringUtils.isEmpty(regionName) || StringUtils.isEmpty(regionName) || StringUtils.isEmpty(userName) || StringUtils.isEmpty(password) || StringUtils.isEmpty(passwordConfirm))
 			{
-				if (checkUser(user))
+				result.setMessage(UtilConstants.USER_NAME_UNCOMPLETED);
+				result.setMessageCode(UtilConstants.ERROR_CODE);
+			}
+			else
+			{
+				if(!password.equals(passwordConfirm))
 				{
+					result.setMessage(UtilConstants.MESSAGE_PASSWORD_CONFIRM);
+					result.setMessageCode(UtilConstants.ERROR_CODE);
+				}
+				else
+				{
+					User user = getNewNormalUser(regionName,hospitalName,userName,password);
 					if (projectManagerService.addUser(user, getSessionUserId(httpSession)))
 					{
 						result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
@@ -171,26 +323,65 @@ public class RestProjectController
 						result.setMessageCode(UtilConstants.ERROR_CODE);
 					}
 				}
-				else
-				{
-					result.setMessage(UtilConstants.USER_NAME_UNCOMPLETED);
-					result.setMessageCode(UtilConstants.ERROR_CODE);
-				}
 			}
-			else
-			{
-				result.setMessage(UtilConstants.ERROR_EMPTY);
-				result.setMessageCode(UtilConstants.ERROR_CODE);
-			}
-
 		}
 		catch (Exception ex)
 		{
-			result.setMessage(UtilConstants.MESSAGE_FAILURE);
+			result.setMessage(ex.getMessage());
 			result.setMessageCode(UtilConstants.ERROR_CODE);
 			logger.debug("getManagerUserList: " + ex.getMessage());
 		}
 		return result;
+	}
+	
+	
+	/**
+	 * 项目管理员添加操作员
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/deleteUser.ajax", method = RequestMethod.POST)
+	public ResultDto<String> deleteUser(String id, HttpSession httpSession)
+	{
+		ResultDto<String> result = new ResultDto<String>();
+		try
+		{
+			if(StringUtils.isEmpty(id))
+			{
+				result.setMessage(UtilConstants.ERROR_EMPTY);
+				result.setMessageCode(UtilConstants.ERROR_CODE);
+			}
+			else
+			{
+				if (projectManagerService.deleteUser(id, getSessionUserId(httpSession)))
+				{
+					result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
+					result.setMessageCode(UtilConstants.SUCCESS_CODE);
+				}
+				else
+				{
+					result.setMessage(UtilConstants.MESSAGE_FAILURE);
+					result.setMessageCode(UtilConstants.ERROR_CODE);
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			result.setMessage(ex.getMessage());
+			result.setMessageCode(UtilConstants.ERROR_CODE);
+			logger.debug("deleteUser: " + ex.getMessage());
+		}
+		return result;
+	}
+	
+	private User getNewNormalUser(String regionName,String hospitalName,String userName,String password)
+	{
+		User user = new User();
+		user.setRegion(regionName);
+		user.setHospital(hospitalName);
+		user.setUserName(userName);
+		user.setPassword(password);
+		return user;
 	}
 
 	/**
@@ -229,10 +420,29 @@ public class RestProjectController
 	 */
 	private String getSessionUserId(HttpSession httpSession)
 	{
-		User user = (User) httpSession.getAttribute("currentUser");
-		return user.getUserId();
+		User user = getSessionUser(httpSession);
+		if(user != null)
+		{
+			return user.getUserId();
+		}
+		else
+		{
+			return null;
+		}
 	}
 
+	/**
+	 * 获取登录用户ID
+	 * 
+	 * @param httpSession
+	 * @return
+	 */
+	private User getSessionUser(HttpSession httpSession)
+	{
+		return (User) httpSession.getAttribute("currentUser");
+	}
+	
+	
 	/**
 	 * 操作员上传申报信息
 	 * 
@@ -242,13 +452,13 @@ public class RestProjectController
 	 */
 	@RequestMapping(value = "/uploadFiles.ajax")
 	@ResponseBody
-	public ResultDto<String> uploadFiles(@RequestParam(value = "uploadFile") MultipartFile sourceFile, String month,
+	public ResultDto<String> uploadFiles(@RequestParam(value = "sourceFile") MultipartFile sourceFile, String monthText,
 			HttpSession httpSession)
 	{
 		ResultDto<String> result = new ResultDto<String>();
 		try
 		{
-			if (projectManagerService.uploadFiles(sourceFile, getSessionUserId(httpSession), month))
+			if (projectManagerService.uploadFiles(sourceFile, getSessionUserId(httpSession), monthText))
 			{
 				result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 				result.setMessageCode(UtilConstants.SUCCESS_CODE);
@@ -280,6 +490,12 @@ public class RestProjectController
 		return result;
 	}
 
+//	private String getMonthText(String monthText)
+//	{
+//		return monthText.replace("/", "年") + "月";
+//	}
+	
+	
 	/**
 	 * 上传模板文件
 	 * 
@@ -289,7 +505,7 @@ public class RestProjectController
 	 */
 	@RequestMapping(value = "/uploadTemplate.ajax")
 	@ResponseBody
-	public ResultDto<String> uploadTemplate(@RequestParam(value = "uploadTemplate") MultipartFile templateFile,
+	public ResultDto<String> uploadTemplate(@RequestParam(value = "sourceFile") MultipartFile templateFile,
 			HttpSession httpSession)
 	{
 		ResultDto<String> result = new ResultDto<String>();
@@ -356,7 +572,7 @@ public class RestProjectController
 	 * @param httpSession
 	 * @return
 	 */
-	@RequestMapping(value = "/deleteTemplate.ajax")
+	@RequestMapping(value = "/deleteTemplate.ajax", method = RequestMethod.POST)
 	@ResponseBody
 	public ResultDto<String> deleteTemplate(String templateId, HttpSession httpSession)
 	{
@@ -404,62 +620,73 @@ public class RestProjectController
 	 * @param file
 	 * @param fileName
 	 * @param response
+	 * @throws UnsupportedEncodingException 
 	 */
 	private void downloadFile(File file, String fileName, HttpServletResponse response)
 	{
-		if (file.exists())
+		try
 		{
-			response.setContentType("application/force-download");// 设置强制下载不打开
-			response.addHeader("Content-Disposition", "attachment;fileName=" + fileName);// 设置文件名
-			byte[] buffer = new byte[1024];
-			FileInputStream fis = null;
-			BufferedInputStream bis = null;
-			try
+			if (file.exists())
 			{
-				fis = new FileInputStream(file);
-				bis = new BufferedInputStream(fis);
-				OutputStream os = response.getOutputStream();
-				int i = bis.read(buffer);
-				while (i != -1)
+				response.setContentType("application/force-download");// 设置强制下载不打开
+				response.setContentType("application/json;charset=UTF-8");
+				String encodeFileName = new String(fileName.getBytes("GB2312"),"iso8859-1");
+				response.addHeader("Content-Disposition", "attachment;fileName=" + encodeFileName);// 设置文件名
+				byte[] buffer = new byte[1024];
+				FileInputStream fis = null;
+				BufferedInputStream bis = null;
+				try
 				{
-					os.write(buffer, 0, i);
-					i = bis.read(buffer);
+					fis = new FileInputStream(file);
+					bis = new BufferedInputStream(fis);
+					OutputStream os = response.getOutputStream();
+					int i = bis.read(buffer);
+					while (i != -1)
+					{
+						os.write(buffer, 0, i);
+						i = bis.read(buffer);
+					}
+					os.close();
 				}
-				os.close();
-			}
-			catch (Exception e)
-			{
-				// TODO: handle exception
-				e.printStackTrace();
-			}
-			finally
-			{
-				if (bis != null)
+				catch (Exception e)
 				{
-					try
-					{
-						bis.close();
-					}
-					catch (IOException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					// TODO: handle exception
+					e.printStackTrace();
 				}
-				if (fis != null)
+				finally
 				{
-					try
+					if (bis != null)
 					{
-						fis.close();
+						try
+						{
+							bis.close();
+						}
+						catch (IOException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-					catch (IOException e)
+					if (fis != null)
 					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						try
+						{
+							fis.close();
+						}
+						catch (IOException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 			}
 		}
+		catch(Exception ex)
+		{
+			
+		}
+		
 	}
 
 	@RequestMapping("/downloadTemplateFile.ajax")
@@ -475,5 +702,75 @@ public class RestProjectController
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * 获取项目对应的模板
+	 * @param httpSession
+	 * @return
+	 */
+	@RequestMapping(value = "/getTemplateList.ajax", method = RequestMethod.GET)
+	public ResultSingleDto<TemplateDtoList> getTemplateList(HttpSession httpSession)
+	{
+		ResultSingleDto<TemplateDtoList> result = new ResultSingleDto<TemplateDtoList>();
+		try
+		{
+			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
+			result.setMessageCode(UtilConstants.SUCCESS_CODE);
+			List<Template> templates = projectManagerService.GetMyTemplateList(getSessionUser(httpSession));
+			result.setResult(convertTemplateDto(templates));
+		}
+		catch (Exception ex)
+		{
+			result.setMessage(UtilConstants.MESSAGE_FAILURE);
+			result.setMessageCode(UtilConstants.ERROR_CODE);
+			logger.debug("getTemplateList: " + ex.getMessage());
+		}
+		return result;
+	}
+	
+	private TemplateDtoList convertTemplateDto(List<Template> templates)
+	{
+		TemplateDtoList dto = new TemplateDtoList();
+		List<TemplateDto> myTemplates = new ArrayList<TemplateDto>();
+		if(templates != null && templates.size() >0)
+		{
+			dto.setTotal(templates.size());			
+			for(Template template : templates)
+			{
+				myTemplates.add(getTemplateDto(template));
+			}			
+		}		
+		dto.setRows(myTemplates);
+		return dto;		
+	}
+	
+	private TemplateDto getTemplateDto(Template template)
+	{
+		TemplateDto dto = new TemplateDto();		
+		dto.setId(template.getTemplateId());
+		dto.setTemplateName(template.getName());		
+		return dto;
+		
+	}
+	
+	
+	@RequestMapping(value = "/getMyDownloadList.ajax", method = RequestMethod.GET)
+	public ResultSingleDto<MyDownloadFileDtoList> getMyDownloadList(HttpSession httpSession)
+	{
+		ResultSingleDto<MyDownloadFileDtoList> result = new ResultSingleDto<MyDownloadFileDtoList>();
+		try
+		{
+			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
+			result.setMessageCode(UtilConstants.SUCCESS_CODE);
+			result.setResult(projectManagerService.getMyDownloadFiles(this.getSessionUser(httpSession)));
+		}
+		catch (Exception ex)
+		{
+			result.setMessage(UtilConstants.MESSAGE_FAILURE);
+			result.setMessageCode(UtilConstants.ERROR_CODE);
+			logger.debug("getMyDownloadList: " + ex.getMessage());
+		}
+		return result;
 	}
 }

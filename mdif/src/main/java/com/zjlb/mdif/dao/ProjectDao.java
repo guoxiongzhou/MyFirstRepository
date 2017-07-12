@@ -1,5 +1,7 @@
 package com.zjlb.mdif.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.zjlb.mdif.entity.Project;
@@ -18,4 +20,8 @@ public interface ProjectDao
     int updateByPrimaryKeySelective(Project record);
 
     int updateByPrimaryKey(Project record);
+    
+    List<Project> selectAll();
+    
+    List<Project> selectByProjectName(String projectName);
 }

@@ -22,6 +22,7 @@
                 /jsp/admin.jsp = roles[admin]
                 /**/*.css=anon
                 /**/*.png=anon
+                /**/*.gif=anon
                 /**/*.js=anon
                 /logout = logout
             </value>

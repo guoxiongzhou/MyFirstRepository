@@ -1,6 +1,6 @@
-ï»¿/* all */
+/* all */
 body, div, ul, ol, dl, dt, dd, li, dl, h1, h2, h3, h4
-{margin:0;padding:0;font-style:normal;font-size:12px;font-family: 'Microsoft Yahei', 'å¾®è½¯é›…é»‘',arial} 
+{margin:0;padding:0;font-style:normal;font-size:12px;font-family: 'Microsoft Yahei', 'Î¢ÈíÑÅºÚ',arial} 
 ol, ul ,li{list-style: none;} 
 img {border: 0; vertical-align:middle;} 
 body{color:#000000;background:#FFF; text-align:center;} 
@@ -43,12 +43,7 @@ html,body{
   padding-top: 125px;
   padding-left: 90px;
 }
-.login-table div{
-  width: 260px;
-  height: 40px;
-  box-sizing: border-box;
-  padding-left: 10px;
-}
+
 .login-table td{
   padding-bottom: 20px;
 }
@@ -176,12 +171,7 @@ html,body{
   display: inline-block;
   padding-right: 10px;
 }
-input{
-  width: 180px;
-  border: 1px solid #c1e3ec;
-  height: 28px;
-  line-height: 28px;
-}
+
 .main-table{
   width: 100%;
   margin-top: 10px;

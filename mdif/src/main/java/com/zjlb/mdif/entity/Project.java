@@ -5,6 +5,30 @@ public class Project {
 
     private String name;
 
+    private int startYear;
+    
+    private int startMonth;
+    
+    public int getStartYear()
+	{
+		return startYear;
+	}
+
+	public void setStartYear(int startYear)
+	{
+		this.startYear = startYear;
+	}
+
+	public int getStartMonth()
+	{
+		return startMonth;
+	}
+
+	public void setStartMonth(int startMonth)
+	{
+		this.startMonth = startMonth;
+	}
+    
     public String getProjectId() {
         return projectId;
     }
@@ -20,4 +44,8 @@ public class Project {
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
     }
+
+	
+    
+    
 }

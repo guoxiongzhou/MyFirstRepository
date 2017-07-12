@@ -1,5 +1,7 @@
 package com.zjlb.mdif.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.zjlb.mdif.entity.Template;
@@ -18,4 +20,6 @@ public interface TemplateDao
     int updateByPrimaryKeySelective(Template record);
 
     int updateByPrimaryKey(Template record);
+    
+    List<Template> selectByProjectId(String projectId);
 }

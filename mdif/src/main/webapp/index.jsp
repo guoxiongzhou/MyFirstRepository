@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>登录页</title>
 <link type="text/css" href="<%=request.getContextPath()%>/css/styles.css" rel="Stylesheet" />
-<script src="./js/jquery.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/themes/js/jquery.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -30,10 +30,11 @@
 
 					</tr>
 					<tr>
-						<td><span class="red-text">用户名或密码错误</span></td>
+						<td><span class="red-text" name="failMsg"></span></td>
 					</tr>
-					</form>
+					
 				</table>
+				</form>
 		</div>
 	</div>
 

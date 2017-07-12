@@ -14,7 +14,7 @@ public class User implements Serializable
 
     /**
      * 角色
-     * 0,省中心总管理员；1，省中心项目管理员；2，各区域管理员。
+     * 3,省中心总管理员；2，省中心项目管理员；1，各区域管理员。
      */
     private int role;
 

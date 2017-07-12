@@ -4,9 +4,11 @@
   <resultMap id="BaseResultMap" type="com.zjlb.mdif.entity.Project">
     <id column="project_id" jdbcType="CHAR" property="projectId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="start_year" jdbcType="INTEGER" property="startYear" />
+    <result column="start_month" jdbcType="INTEGER" property="startMonth" />
   </resultMap>
   <sql id="Base_Column_List">
-    project_id, name
+    project_id, name,start_year,start_month
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -14,13 +16,23 @@
     from t_project
     where project_id = #{projectId,jdbcType=CHAR}
   </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_project
+  </select>
+  <select id="selectByProjectName" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_project where name like '%${projectName,jdbcType=VARCHAR}%' ORDER BY
+	</select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from t_project
     where project_id = #{projectId,jdbcType=CHAR}
   </delete>
   <insert id="insert" parameterType="com.zjlb.mdif.entity.Project">
-    insert into t_project (project_id, name)
-    values (#{projectId,jdbcType=CHAR}, #{name,jdbcType=VARCHAR})
+    insert into t_project (project_id, name,start_year,start_month)
+    values (#{projectId,jdbcType=CHAR}, #{name,jdbcType=VARCHAR},#{startYear,jdbcType=INTEGER},#{startMonth,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.zjlb.mdif.entity.Project">
     insert into t_project
@@ -31,6 +43,12 @@
       <if test="name != null">
         name,
       </if>
+      <if test="startYear != null">
+        start_year,
+      </if>
+      <if test="startMonth != null">
+        start_month,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="projectId != null">
@@ -39,7 +57,13 @@
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
-    </trim>
+      <if test="startYear != null">
+        #{startYear,jdbcType=INTEGER},
+      </if>
+      <if test="startMonth != null">
+        #{startMonth,jdbcType=INTEGER},
+      </if>
+    </trim>    
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.zjlb.mdif.entity.Project">
     update t_project
@@ -47,12 +71,18 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="startYear != null">
+        name = #{startYear,jdbcType=INTEGER},
+      </if>
+      <if test="startMonth != null">
+        name = #{startMonth,jdbcType=INTEGER},
+      </if>
     </set>
     where project_id = #{projectId,jdbcType=CHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zjlb.mdif.entity.Project">
     update t_project
-    set name = #{name,jdbcType=VARCHAR}
+    set name = #{name,jdbcType=VARCHAR},start_year = #{startYear,jdbcType=INTEGER},start_month = #{startMonth,jdbcType=INTEGER}
     where project_id = #{projectId,jdbcType=CHAR}
   </update>
 </mapper>

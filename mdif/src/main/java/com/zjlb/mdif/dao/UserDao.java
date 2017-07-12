@@ -26,6 +26,8 @@ public interface UserDao
     
     List<User> selectOperatorByProjectId(String projectId);
     
+    User selectProjectManager(String projectId);
+    
     List<ProjectListDto> selectAllProjects();    
     
     List<ProjectListDto> searchProjects(String projectName);

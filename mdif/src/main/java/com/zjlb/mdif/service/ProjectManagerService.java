@@ -9,8 +9,11 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.zjlb.mdif.entity.MyDownloadFileDtoList;
 import com.zjlb.mdif.entity.ProjectListDto;
 import com.zjlb.mdif.entity.ResultDto;
+import com.zjlb.mdif.entity.Template;
+import com.zjlb.mdif.entity.UploadFile;
 import com.zjlb.mdif.entity.User;
 
 /**
@@ -107,4 +110,20 @@ public interface ProjectManagerService
      * @return
      */
     File GetTemplateFile(String templateId);
+    
+    /**
+     * 获取当前项目管理员用户所在项目的模板文件列表
+     * @param user
+     * @return
+     */
+    List<Template> GetMyTemplateList(User user);
+    
+    /**
+     * 获取当前用户有权限查看的文档列表
+     * @param user
+     * @return
+     */
+    MyDownloadFileDtoList getMyDownloadFiles(User user);
+    
+    
 }
