@@ -15,6 +15,7 @@ import com.zjlb.mdif.dao.UploadFileDao;
 import com.zjlb.mdif.dao.UserDao;
 import com.zjlb.mdif.entity.Project;
 import com.zjlb.mdif.entity.ProjectListDto;
+import com.zjlb.mdif.entity.ProjectListWithPageDto;
 import com.zjlb.mdif.entity.UploadFile;
 import com.zjlb.mdif.entity.User;
 import com.zjlb.mdif.entity.CommonEnum.UploadStatus;
@@ -47,24 +48,23 @@ public class MainManagerServiceImpl implements MainManagerService
 	 * 总管理员获取项目信息列表
 	 */
 	@Override
-	public List<ProjectListDto> selectAllProjects(User user,UploadStatus uploadStatus)
+	public ProjectListWithPageDto selectAllProjects(User user,UploadStatus uploadStatus,int pageNumber,int pageSize)
 	{
+		List<ProjectListDto> projects = new ArrayList<ProjectListDto>();
 		if(isAdminRole(user))
 		{
 			switch(uploadStatus)
 			{
 				case UPLOADED:
-					return getUploadedProjects();
+					projects = getUploadedProjects();
 				case UNUPLOAD:
-					return getUnuploadedProjects();
+					projects =  getUnuploadedProjects();
 				default:
-					return getAllProjects();
+					projects =  getAllProjects();
 			}
 		}
-		else
-		{
-			return null;
-		}
+		//分页处理		
+		return selectByPage(projects,pageNumber,pageSize);		
 	}
 
 	/**
@@ -314,7 +314,7 @@ public class MainManagerServiceImpl implements MainManagerService
 	}
 
 	@Override
-	public List<ProjectListDto> selectMyProject(User user, String monthText)
+	public ProjectListWithPageDto selectMyProject(User user, String monthText,int pageNumber,int pageSize)
 	{		
 		List<ProjectListDto> projectDtos = new ArrayList<ProjectListDto>();
 		List<ProjectListDto> tempProjectDtos = null;
@@ -332,10 +332,34 @@ public class MainManagerServiceImpl implements MainManagerService
 		if(tempProjectDtos != null && tempProjectDtos.size()>0)
 		{
 			projectDtos.addAll(tempProjectDtos);
-		}		
-		return projectDtos;
+		}	
+		//分页处理
+		return selectByPage(projectDtos,pageNumber,pageSize);
 	}
 	
+	
+	private ProjectListWithPageDto selectByPage(List<ProjectListDto> projectDtos,int pageNumber,int pageSize)
+	{
+		ProjectListWithPageDto result = new ProjectListWithPageDto();
+		List<ProjectListDto> projectLit = new ArrayList<ProjectListDto>();
+		int startIndex = (pageNumber -1) * pageSize;
+		int end = startIndex + pageSize;
+		if(projectDtos.size() < end)
+		{
+			end = projectDtos.size();
+		}
+		if((startIndex < projectDtos.size()))
+		{
+			for(int i = startIndex; i<end; i++)
+			{
+				projectLit.add(projectDtos.get(i));
+			}
+		}	
+		result.setRows(projectLit);
+		result.setTotal(projectDtos.size());
+		return result;
+		
+	}
 	
 
 }

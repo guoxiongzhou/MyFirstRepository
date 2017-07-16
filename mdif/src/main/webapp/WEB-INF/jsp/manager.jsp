@@ -141,14 +141,14 @@
 					           </div>
                            </td>                          
                            <td>
-                           <a id="btnSearchProject" href="#" class="easyui-linkbutton" type="submit" iconCls="icon-ok" style="width: 50; height: 24px" onclick="loadMyProjectByMonth()">查询</a> 
+                           <a id="btnSearchProject" href="#" class="easyui-linkbutton" type="submit" iconCls="icon-ok" style="width: 50; height: 24px" onclick="loadMyProject()">查询</a> 
                            </td>
                            </tr>
 					   
 					   </table>
 				<table id="myProjectListTable" class="easyui-datagrid"
 						style="width: 920px; height: 500px"
-						data-options="rownumbers:true,singleSelect:true,method:'get'">
+						data-options="rownumbers:true,singleSelect:true,method:'get'"  pagination="true">
 						<thead>
 							<tr>							
 							    <th data-options="field:'projectName',hidden:true">项目名称</th>
@@ -272,6 +272,7 @@ function formatDownloadFileOper(val, row, index)
 			}
 		} ];
 	</script>
+	
 	<script>
 		$(function(){
 			$('#myProjectListTable').datagrid({
@@ -279,7 +280,7 @@ function formatDownloadFileOper(val, row, index)
 					if (row.uploadStatus == '否'){
 						return 'color:red;font-weight:bold;';
 					}
-				}
+				}			
 			});
 		});
 	</script>

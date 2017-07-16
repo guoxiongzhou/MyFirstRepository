@@ -17,6 +17,7 @@ com\zjlb\mdif\dao\UserDao.class
 com\zjlb\mdif\dao\UploadFileDao.class
 com\zjlb\mdif\entity\MyUserDto.class
 com\zjlb\mdif\entity\Menu.class
+com\zjlb\mdif\service\impl\MainManagerServiceImpl$1.class
 com\zjlb\mdif\controller\UserController.class
 com\zjlb\mdif\dao\RoleDao.class
 com\zjlb\mdif\controller\rest\RestProjectController.class

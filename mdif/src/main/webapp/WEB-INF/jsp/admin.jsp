@@ -42,9 +42,10 @@
                     <div class="fl operation-input"><span>搜索:</span><input class="input-style" type="" name="" > </div>
                 </div>
                 <div class="clear"></div>
-                <table id="templateList" class="easyui-datagrid"
-						style="width: 1100px; height: 500px"
-						data-options="rownumbers:true,singleSelect:true,method:'get'">
+                <div id ="divTemplateList1" style="display: block;">
+                <table id="templateList1" class="easyui-datagrid"
+						style="width: 1100px; height: 500px;display: none;"
+						data-options="rownumbers:true,singleSelect:true,method:'get'"  pagination="true" style="display: block;">
 						<thead>
 							<tr>							
 							    <th data-options="field:'projectName',width:200,align:'center'">项目名称</th>
@@ -55,8 +56,41 @@
 								<th data-options="field:'projectManager',width:170,align:'center'">管理员</th>
 							</tr>
 						</thead>
-				</table>               
-            </div>
+				</table> 
+				</div>
+				<div id ="divTemplateList2" style="display: none;">
+				<table id="templateList2" class="easyui-datagrid"
+						style="width: 1100px; height: 500px;"
+						data-options="rownumbers:true,singleSelect:true,method:'get'"  pagination="true" style="display: block;">
+						<thead>
+							<tr>							
+							    <th data-options="field:'projectName',width:200,align:'center'">项目名称</th>
+								<th data-options="field:'region',width:100,align:'center'">区域</th>
+								<th data-options="field:'hospital',width:365,align:'center'">医院名称</th>
+								<th data-options="field:'monthText',width:120,align:'center'">上传月份</th>
+								<th data-options="field:'uploadStatus',width:100,align:'center'">是否上传</th>							
+								<th data-options="field:'projectManager',width:170,align:'center'">管理员</th>
+							</tr>
+						</thead>
+				</table>
+				</div>
+				<div id ="divTemplateList3" style="display: none;">
+				<table id="templateList3" class="easyui-datagrid"
+						style="width: 1100px; height: 500px;display: block;"
+						data-options="rownumbers:true,singleSelect:true,method:'get'"  pagination="true" style="display: block;">
+						<thead>
+							<tr>							
+							    <th data-options="field:'projectName',width:200,align:'center'">项目名称</th>
+								<th data-options="field:'region',width:100,align:'center'">区域</th>
+								<th data-options="field:'hospital',width:365,align:'center'">医院名称</th>
+								<th data-options="field:'monthText',width:120,align:'center'">上传月份</th>
+								<th data-options="field:'uploadStatus',width:100,align:'center'">是否上传</th>							
+								<th data-options="field:'projectManager',width:170,align:'center'">管理员</th>
+							</tr>
+						</thead>
+				</table> 
+				</div>             
+            </div>            
         </div>
     </div>
 

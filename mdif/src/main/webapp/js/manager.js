@@ -8,6 +8,32 @@ window.onload = function()
 		});
 	});
 	intilizeNavigation();
+	//表格分页处理
+	var pager=$('#myProjectListTable').datagrid('getPager');
+    pager.pagination({
+        total:0,
+        rows : 0,
+        pageNumber : 1,
+        pageList : [ 10,20,30 ],// 可以设置每页记录条数的列表
+        beforePageText: '第',//页数文本框前显示的汉字   
+        afterPageText: '页    共 {pages} 页',  
+        displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录', 
+        onBeforeRefresh: function () {  
+        },  
+        onSelectPage: function (pageNumber, pageSize) {//分页触发  
+        	loadMyProjectByMonth(pageNumber, pageSize);  
+        }
+    });
+    
+//	$('#myProjectListTable').datagrid('getPager').pagination({  
+//        pageSize: 10,  
+//        pageNumber: 1,  
+//        pageList: [10, 20, 30, 40, 50],  
+//        beforePageText: '第',//页数文本框前显示的汉字   
+//        afterPageText: '页    共 {pages} 页',  
+//        displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录',  
+//   });
+	  
 }
 
 /**
@@ -387,7 +413,7 @@ function loadDownloadList()
 		success : function(data) {
 			if (data.messageCode == "00000") 
 			{
-				 $('#myDownloadListTable').datagrid('loadData', data.result);
+				 $('#myDownloadListTable').datagrid('loadData', data.result);				 
 				
 			} 
 		},
@@ -401,46 +427,71 @@ function loadDownloadList()
 
 function loadMyProject() 
 {
+	var pageNumber = $("#myProjectListTable").datagrid("getPager").data("pagination").options.pageNumber;
+	var pageSize = $("#myProjectListTable").datagrid("getPager").data("pagination").options.pageSize;
+	if(pageNumber == 0)
+	{
+		pageNumber = 1;
+	}
+	loadMyProjectByMonth(pageNumber, pageSize);  
+	//loadMyProjectByMonth(1,10);
+//	$.ajax({
+//		url : rootPath + '/project/getManagerProject.ajax?version='
+//				+ new Date().getTime(),
+//		type : 'GET',
+//		dataType : 'json',
+//		cache : false,
+//		success : function(data) {
+//			if (data.messageCode == "00000") 
+//			{
+//				 $('#myProjectListTable').datagrid('loadData', data.result);
+//				
+//			} else {
+//				alert(data.message);
+//			}
+//		},
+//		error : function(XMLHttpRequest, textStatus, errorThrown) {
+//			alert(errorThrown);
+//		}
+//	});
+}
+
+function loadMyProjectByMonth(pageNumber, pageSize) 
+{
+	$("#myProjectListTable").datagrid('getPager').pagination({pageSize : pageSize, pageNumber : pageNumber});//重置
+	$("#myProjectListTable").datagrid("loading"); //加屏蔽
+	var monthText = $('#selectMonthText').combobox('getValue');
 	$.ajax({
-		url : rootPath + '/project/getManagerProject.ajax?version='
-				+ new Date().getTime(),
-		type : 'GET',
+		url : rootPath + "/project/getManagerProjectByMonth.ajax?version= " + new Date().getTime() ,
+		type : 'Post',
 		dataType : 'json',
 		cache : false,
+		data : {
+            'pageNumber' : pageNumber,
+            'pageSize' : pageSize,
+            'monthText' : monthText
+        },
 		success : function(data) {
 			if (data.messageCode == "00000") 
 			{
-				 $('#myProjectListTable').datagrid('loadData', data.result);
+				 //$('#myProjectListTable').datagrid('loadData', data.result);
+				 $("#myProjectListTable").datagrid('loadData',pageData(data.result.rows,data.result.total));
 				
 			} else {
 				alert(data.message);
 			}
+			$("#myProjectListTable").datagrid("loaded"); //移除屏蔽
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert(errorThrown);
+			$("#myProjectListTable").datagrid("loaded"); //移除屏蔽
 		}
 	});
 }
 
-function loadMyProjectByMonth() 
-{
-	var monthText = $('#selectMonthText').combobox('getValue');
-	$.ajax({
-		url : rootPath + "/project/getManagerProjectByMonth.ajax?monthText=" + monthText + " & version= " + new Date().getTime() ,
-		type : 'GET',
-		dataType : 'json',
-		cache : false,
-		success : function(data) {
-			if (data.messageCode == "00000") 
-			{
-				 $('#myProjectListTable').datagrid('loadData', data.result);
-				
-			} else {
-				alert(data.message);
-			}
-		},
-		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			alert(errorThrown);
-		}
-	});
+function pageData(list,total){
+    var obj=new Object(); 
+    obj.total=total; 
+    obj.rows=list; 
+    return obj; 
 }

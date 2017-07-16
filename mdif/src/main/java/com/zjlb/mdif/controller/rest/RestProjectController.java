@@ -34,6 +34,7 @@ import com.zjlb.mdif.entity.MyDownloadFileDtoList;
 import com.zjlb.mdif.entity.MyUserDto;
 import com.zjlb.mdif.entity.MyUserListDto;
 import com.zjlb.mdif.entity.ProjectListDto;
+import com.zjlb.mdif.entity.ProjectListWithPageDto;
 import com.zjlb.mdif.entity.Region;
 import com.zjlb.mdif.entity.ResultDto;
 import com.zjlb.mdif.entity.ResultSingleDto;
@@ -80,7 +81,7 @@ public class RestProjectController
 		{
 			result.setMessage(UtilConstants.MESSAGE_FAILURE);
 			result.setMessageCode(UtilConstants.ERROR_CODE);
-			logger.debug("getMainManagerProjectList: " + ex.getMessage());
+			logger.debug("getHospitals: " + ex.getMessage());
 		}
 		return result;
 	}
@@ -99,7 +100,7 @@ public class RestProjectController
 		{
 			result.setMessage(UtilConstants.MESSAGE_FAILURE);
 			result.setMessageCode(UtilConstants.ERROR_CODE);
-			logger.debug("getMainManagerProjectList: " + ex.getMessage());
+			logger.debug("getRegion: " + ex.getMessage());
 		}
 		return result;
 	}
@@ -110,15 +111,15 @@ public class RestProjectController
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/getMainManagerProjectList.ajax", method = RequestMethod.GET)
-	public ResultDto<ProjectListDto> getMainManagerProjectList(Model model, HttpSession httpSession)
+	@RequestMapping(value = "/getMainManagerProjectList.ajax", method = RequestMethod.POST)
+	public ResultSingleDto<ProjectListWithPageDto> getMainManagerProjectList(int pageNumber,int pageSize, HttpSession httpSession)
 	{
-		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
+		ResultSingleDto<ProjectListWithPageDto> result = new ResultSingleDto<ProjectListWithPageDto>();
 		try
 		{
 			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 			result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			result.setResult(mainManagerService.selectAllProjects(getSessionUser(httpSession), UploadStatus.NON));
+			result.setResult(mainManagerService.selectAllProjects(getSessionUser(httpSession), UploadStatus.NON,pageNumber,pageSize));
 		}
 		catch (Exception ex)
 		{
@@ -135,15 +136,15 @@ public class RestProjectController
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/getManagerProject.ajax", method = RequestMethod.GET)
-	public ResultDto<ProjectListDto> getManagerProject(Model model, HttpSession httpSession)
+	@RequestMapping(value = "/getManagerProject.ajax", method = RequestMethod.POST)
+	public ResultSingleDto<ProjectListWithPageDto> getManagerProject(int pageNumber,int pageSize, HttpSession httpSession)
 	{
-		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
+		ResultSingleDto<ProjectListWithPageDto> result = new ResultSingleDto<ProjectListWithPageDto>();
 		try
 		{
 			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 			result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			result.setResult(mainManagerService.selectMyProject(getSessionUser(httpSession), null));
+			result.setResult(mainManagerService.selectMyProject(getSessionUser(httpSession), null,pageNumber,pageSize));
 		}
 		catch (Exception ex)
 		{
@@ -160,15 +161,15 @@ public class RestProjectController
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/getManagerProjectByMonth.ajax", method = RequestMethod.GET)
-	public ResultDto<ProjectListDto> getManagerProjectByMonth(Model model, String monthText,HttpSession httpSession)
+	@RequestMapping(value = "/getManagerProjectByMonth.ajax", method = RequestMethod.POST)
+	public ResultSingleDto<ProjectListWithPageDto> getManagerProjectByMonth(int pageNumber,int pageSize, String monthText,HttpSession httpSession)
 	{
-		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
+		ResultSingleDto<ProjectListWithPageDto> result = new ResultSingleDto<ProjectListWithPageDto>();
 		try
 		{
 			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 			result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			result.setResult(mainManagerService.selectMyProject(getSessionUser(httpSession), monthText));
+			result.setResult(mainManagerService.selectMyProject(getSessionUser(httpSession), monthText,pageNumber,pageSize));
 		}
 		catch (Exception ex)
 		{
@@ -185,15 +186,15 @@ public class RestProjectController
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/getMainManagerUploadedProjectList.ajax", method = RequestMethod.GET)
-	public ResultDto<ProjectListDto> getMainManagerUploadedProjectList(Model model, HttpSession httpSession)
+	@RequestMapping(value = "/getMainManagerUploadedProjectList.ajax", method = RequestMethod.POST)
+	public ResultSingleDto<ProjectListWithPageDto> getMainManagerUploadedProjectList(int pageNumber,int pageSize, HttpSession httpSession)
 	{
-		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
+		ResultSingleDto<ProjectListWithPageDto> result = new ResultSingleDto<ProjectListWithPageDto>();
 		try
 		{
 			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 			result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			result.setResult(mainManagerService.selectAllProjects(getSessionUser(httpSession), UploadStatus.UPLOADED));
+			result.setResult(mainManagerService.selectAllProjects(getSessionUser(httpSession), UploadStatus.UPLOADED,pageNumber,pageSize));
 		}
 		catch (Exception ex)
 		{
@@ -210,15 +211,15 @@ public class RestProjectController
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/getMainManagerUnUploadedProjectList.ajax", method = RequestMethod.GET)
-	public ResultDto<ProjectListDto> getMainManagerUnUploadedProjectList(Model model, HttpSession httpSession)
+	@RequestMapping(value = "/getMainManagerUnUploadedProjectList.ajax", method = RequestMethod.POST)
+	public ResultSingleDto<ProjectListWithPageDto> getMainManagerUnUploadedProjectList(int pageNumber,int pageSize, HttpSession httpSession)
 	{
-		ResultDto<ProjectListDto> result = new ResultDto<ProjectListDto>();
+		ResultSingleDto<ProjectListWithPageDto> result = new ResultSingleDto<ProjectListWithPageDto>();
 		try
 		{
 			result.setMessage(UtilConstants.MESSAGE_SUCCESSFUL);
 			result.setMessageCode(UtilConstants.SUCCESS_CODE);
-			result.setResult(mainManagerService.selectAllProjects(getSessionUser(httpSession), UploadStatus.UNUPLOAD));
+			result.setResult(mainManagerService.selectAllProjects(getSessionUser(httpSession), UploadStatus.UNUPLOAD,pageNumber,pageSize));
 		}
 		catch (Exception ex)
 		{
